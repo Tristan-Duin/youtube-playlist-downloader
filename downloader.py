@@ -3,7 +3,7 @@ from src.youtube_downloader import YouTubeDownloader
 from src.config import setup_directories
 
 def main():
-    print("🎓 YouTube Downloader MVP - College Project")
+    print("YouTube Downloader MVP - College Project")
     print("=" * 40)
     
     if len(sys.argv) != 2:
@@ -34,7 +34,7 @@ def main():
             print(f"Duration: {minutes}m {seconds}s")
         print()
     
-    print("📥 Starting download...")
+    print("Starting download...")
     success = downloader.download_video(url)
     
     if success:
