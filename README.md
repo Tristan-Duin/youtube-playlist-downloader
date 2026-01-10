@@ -2,7 +2,7 @@
 
 ## Team Members
 
-Tristan Duin, Patrick Kahle, Mike Watts,
+Tristan Duin, Patrick Kahle, Mike Watts, Jacob Agbetor
 
 ## Install Dependencies
 
