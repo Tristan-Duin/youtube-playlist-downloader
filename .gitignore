@@ -1,0 +1,16 @@
+# Downloaded files
+downloads/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+env/
+
+# Other
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
