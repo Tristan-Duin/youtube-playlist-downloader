@@ -105,8 +105,8 @@ python downloader.py "https://www.youtube.com/watch?v=VIDEO_ID"
 
 ## Tools Used By Team
 
-Communication: Discord
-Project Management: Monday.com Kanban Boards
-Code Repository: Github.com
-IDE(s): VSCode & Pycharm
-Language(s): Python
+- Communication: Discord
+- Project Management: Monday.com Kanban Boards
+- Code Repository: Github.com
+- IDE(s): VSCode & Pycharm
+- Language(s): Python
