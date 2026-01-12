@@ -4,12 +4,9 @@ from src.config import setup_directories
 
 def main():
     print("YouTube Downloader MVP - College Project")
-    print("=" * 40)
     
     if len(sys.argv) != 2:
         print("Usage: python downloader.py \"https://www.youtube.com/watch?v=VIDEO_ID\"")
-        print("\nExample:")
-        print("python downloader.py \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\"")
         sys.exit(1)
     
     url = sys.argv[1]

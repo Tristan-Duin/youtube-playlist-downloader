@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube Downloader</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Downloader</h1>
+        
+        <form id="form">
+            <input type="url" id="url-input" placeholder="YouTube URL" required>
+            <button type="submit" id="download-btn">Download</button>
+        </form>
+        
+        <div id="message"></div>
+        <div id="status">Ready</div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/downloader.js') }}"></script>
+</body>
+</html>
