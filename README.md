@@ -4,6 +4,16 @@
 
 Tristan Duin, Patrick Kahle, Mike Watts, Jacob Agbetor
 
+## Tools Used By Team
+
+- Communication: Discord
+- Project Management: Monday.com Kanban Boards
+- Code Repository: Github.com
+- IDE(s): VSCode & Pycharm
+- Language(s): Python
+
+---
+
 ## Setup Tooling
 
 1) Install Python 3 (includes pip)
@@ -103,10 +113,98 @@ pip install -r requirements.txt
 python downloader.py "https://www.youtube.com/watch?v=VIDEO_ID"
 ```
 
-## Tools Used By Team
+---
 
-- Communication: Discord
-- Project Management: Monday.com Kanban Boards
-- Code Repository: Github.com
-- IDE(s): VSCode & Pycharm
-- Language(s): Python
+## Development Workflow
+
+### Direct pushes to `main` are NOT allowed
+All work **must** be done in branches and merged through **Pull Requests (PRs)**.
+
+## Creating a Branch
+
+### GitHub Desktop
+1. Open the repository
+2. Click **Current Branch → New Branch**
+3. Name your branch (examples below)
+4. Click **Create Branch**
+
+### Git CLI
+```bash
+git checkout -b feature/your-feature-name
+```
+
+**Branch naming examples**
+- `feature/download-logging`
+- `bugfix/fix-playlist-error`
+- `docs/readme-update`
+
+---
+
+## Committing Changes
+
+### GitHub Desktop
+1. Review changed files
+2. Write a clear commit message
+3. Click **Commit to branch-name**
+
+### Git CLI
+```bash
+git status
+git add .
+git commit -m "Short clear description of change"
+```
+
+---
+
+## Pushing Your Branch
+
+### GitHub Desktop
+- Click **Push origin**
+
+### Git CLI
+```bash
+git push origin feature/your-feature-name
+```
+
+---
+
+## Creating a Pull Request (PR)
+
+### Using GitHub Website
+1. Go to the repository on GitHub
+2. You will see **Compare & pull request**
+3. Click it
+4. Add:
+   - Clear title
+   - Brief description of changes
+5. Submit the PR
+
+### Rules for PRs
+- PR must target `main`
+- PR should be reviewed before merging
+- Fix requested changes if asked
+
+---
+
+## Merging
+- Only approved PRs may be merged into `main`
+- Do **not** merge your own PR unless explicitly allowed
+- After merge, you may delete your branch
+
+---
+
+## Keeping Your Branch Up To Date
+
+### GitHub Desktop
+- Switch to `main`
+- Click **Fetch / Pull**
+- Switch back to your branch
+- Click **Branch → Update from main**
+
+### Git CLI
+```bash
+git checkout main
+git pull origin main
+git checkout feature/your-feature-name
+git merge main
+```
