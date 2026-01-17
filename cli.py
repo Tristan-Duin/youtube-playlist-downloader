@@ -6,7 +6,7 @@ def main():
     print("YouTube Downloader MVP - College Project")
     
     if len(sys.argv) != 2:
-        print("Usage: python downloader.py \"https://www.youtube.com/watch?v=VIDEO_ID\"")
+        print("Usage: python cli.py \"https://www.youtube.com/watch?v=VIDEO_ID\"")
         sys.exit(1)
     
     url = sys.argv[1]
@@ -35,9 +35,9 @@ def main():
     success = downloader.download_video(url)
     
     if success:
-        print("Download completed check the  downloads folder.")
+        print("Download completed!")
     else:
-        print("Download failed please try again and double check the URL is valid.")
+        print("Download failed.")
         sys.exit(1)
 
 if __name__ == "__main__":

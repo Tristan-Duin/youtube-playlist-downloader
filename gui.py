@@ -63,7 +63,7 @@ def download_worker(url):
                 add_message(f"Duration: {minutes}m {seconds}s")
             add_message("")
         
-        add_message("Download...")
+        add_message("Starting download...")
         success = downloader.download_video(url)
         
         if success:

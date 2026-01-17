@@ -16,3 +16,6 @@ def test_basic_functionality():
     assert "title" in info, "Video info missing title"
 
     print(f"Video info retrieved: {info['title']}")
+
+if __name__ == "__main__":
+    test_basic_functionality()

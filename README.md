@@ -18,11 +18,17 @@ Tristan Duin, Patrick Kahle, Mike Watts, Jacob Agbetor
 
 1) Install Python 3 (includes pip)
 
+2) Install Node.js (required for yt-dlp JavaScript execution)
+
+3) Install FFmpeg (recommended for video processing)
+
+**Python Installation:**
+
 Windows (recommended)
 
 Download Python 3.x (64-bit) from python.org (Recommend 3.9 at a minimum)
 
-Run the installer and check: “Add Python to PATH”
+Run the installer and check: "Add Python to PATH"
 
 Click Install Now
 
@@ -43,18 +49,67 @@ sudo apt update
 sudo apt install -y python3 python3-pip python3-venv
 ```
 
-2) Verify installation
+**Node.js Installation:**
 
-Run these commands and make sure you see version output (Python 3.x):
+Windows
+
+Download Node.js from nodejs.org (LTS version recommended)
+
+Run the installer with default settings
+
+macOS
+
+```bash
+brew install node
+```
+
+Linux (Ubuntu/Debian)
+
+```bash
+sudo apt install -y nodejs npm
+```
+
+**FFmpeg Installation:**
+
+Windows
+
+Download FFmpeg from ffmpeg.org/download.html
+
+Extract to a folder (e.g., C:\ffmpeg)
+
+Add C:\ffmpeg\bin to your PATH environment variable
+
+OR powershell: `winget install --id=Gyan.FFmpeg -e
+
+macOS
+
+```bash
+brew install ffmpeg
+```
+
+Linux (Ubuntu/Debian)
+
+```bash
+sudo apt install -y ffmpeg
+```
+
+4) Verify installation
+
+Run these commands and make sure you see version output:
 
 ```
 python --version
 pip --version
+node --version
+npm --version
+ffmpeg -version
 ```
 
-If python doesn’t work but python3 does, use python3/pip3 for the rest of the steps.
+If python doesn't work but python3 does, use python3/pip3 for the rest of the steps.
 
-3) Install Git (to download the project)
+Note: Node.js helps yt-dlp handle YouTube's JavaScript-based protections, and FFmpeg is strongly recommended for video processing and format conversion.
+
+5) Install Git (to download the project)
 
 Windows: install Git for Windows
 macOS:
@@ -75,14 +130,14 @@ Verify:
 git --version
 ```
 
-4) Download the project
+6) Download the project
 
 ```
 git clone https://github.com/Tristan-Duin/youtube-playlist-downloader
 cd <REPO_FOLDER_HERE>
 ```
 
-5) Create and activate a virtual environment (recommended)
+7) Create and activate a virtual environment (recommended)
 
 Windows (PowerShell)
 
@@ -98,8 +153,10 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-6) Upgrade pip (recommended)
+8) Upgrade pip (recommended)
+```bash
 python -m pip install --upgrade pip
+```
 
 ## Install Dependencies
 
