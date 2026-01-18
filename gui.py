@@ -67,9 +67,9 @@ def download_worker(url):
         success = downloader.download_video(url)
         
         if success:
-            add_message("✓ Download completed! Check the downloads folder.")
+            add_message("Download completed!")
         else:
-            add_message("✗ Download failed. Please try again.")
+            add_message("Download failed.")
             
     except Exception as e:
         add_message(f"Error: {str(e)}")
@@ -78,4 +78,4 @@ def download_worker(url):
         download_status['in_progress'] = False
 
 if __name__ == "__main__":
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    app.run(debug=False, host='0.0.0.0', port=5000)
