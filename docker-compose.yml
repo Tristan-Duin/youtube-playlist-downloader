@@ -1,0 +1,15 @@
+services:
+  youtube-downloader-web:
+    build: .
+    container_name: youtube-downloader-web
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./downloads:/app/downloads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s

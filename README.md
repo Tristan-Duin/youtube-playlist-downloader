@@ -14,7 +14,32 @@ Tristan Duin, Patrick Kahle, Mike Watts, Jacob Agbetor
 
 ---
 
-## Setup Tooling
+## Setup Options
+
+### Option 1: Docker Setup (Recommended for usage)
+
+The easiest way to run this project is with Docker. This approach handles all dependencies automatically and works consistently across all platforms.
+
+**Prerequisites:**
+- Docker Desktop (includes Docker Compose)
+- Git
+
+**Installation:**
+1. Install Docker Desktop from https://docker.com/products/docker-desktop
+2. Clone the repository:
+   ```bash
+   git clone https://github.com/Tristan-Duin/youtube-playlist-downloader
+   cd youtube-playlist-downloader
+   ```
+3. Start the application:
+   ```bash
+   docker-compose up -d youtube-downloader-web
+   ```
+4. Open http://localhost:5000
+
+That's it! Skip to the "Run The Downloader" section below.
+
+### Option 2: Manual Python Setup (Recommended for development)
 
 1) Install Python 3 (includes pip)
 
@@ -166,9 +191,150 @@ pip install -r requirements.txt
 
 ## Run The Downloader
 
+### Traditional Python Setup
+
 ```bash
-python downloader.py "https://www.youtube.com/watch?v=VIDEO_ID"
+python cli.py "https://www.youtube.com/watch?v=VIDEO_ID"
 ```
+
+For Web GUI:
+```bash
+python gui.py
+```
+Then visit http://localhost:5000
+
+### Docker Setup (Recommended)
+
+🐳 **The easiest way to run this project!** Docker handles all dependencies automatically and works the same on Windows, Mac, and Linux.
+
+#### Prerequisites
+
+1. **Install Docker Desktop**
+   - **Windows/Mac**: Download from https://docker.com/products/docker-desktop
+   - **Linux**: Install Docker Engine and Docker Compose
+   
+2. **Install Git** (if not already installed)
+   - **Windows**: Download from https://git-scm.com/download/win
+   - **Mac**: `brew install git` or download from git-scm.com
+   - **Linux**: `sudo apt install git` (Ubuntu/Debian) or equivalent
+
+#### Complete Setup Guide
+
+**Step 1: Clone the Repository**
+```bash
+git clone https://github.com/Tristan-Duin/youtube-playlist-downloader
+cd youtube-playlist-downloader
+```
+
+**Step 2: Start the Application**
+```bash
+docker-compose up -d
+docker-compose ps
+```
+
+**Step 3: Access the Web Interface**
+- Open your browser and go to: **http://localhost:5000**
+- You should see the YouTube Downloader interface
+- Downloaded videos will automatically appear in the `./downloads` folder
+
+**Step 4: Test It Out**
+- Paste any YouTube video URL into the interface
+- Click "Download" and watch the progress
+- Videos are saved to `./downloads` on your computer
+
+#### Alternative Usage Methods
+
+**Command Line Interface (CLI)**
+```bash
+# Download a video using CLI
+docker-compose run --rm youtube-downloader-web python cli.py "https://www.youtube.com/watch?v=VIDEO_ID"
+
+# Download a playlist
+docker-compose run --rm youtube-downloader-web python cli.py "https://www.youtube.com/playlist?list=PLAYLIST_ID"
+```
+
+**Interactive Shell Access**
+```bash
+docker-compose run --rm youtube-downloader-web bash
+```
+
+#### Container Management
+
+**View Application Status**
+```bash
+docker-compose ps
+docker-compose logs -f
+docker-compose logs youtube-downloader-web
+```
+
+**Stop and Start**
+```bash
+docker-compose down
+docker-compose up -d
+
+docker-compose restart
+```
+
+**Updates and Rebuilding**
+```bash
+docker-compose build
+docker-compose up -d --build
+
+# Force rebuild without cache (if having issues)
+docker-compose build --no-cache
+```
+
+#### Troubleshooting
+
+**Port Already in Use**
+```bash
+docker ps | grep 5000
+docker stop <container_id>
+```
+
+**Container Won't Start**
+```bash
+docker-compose logs youtube-downloader-web
+
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+**Downloads Folder Permissions (Linux/Mac)**
+```bash
+sudo chown -R $USER:$USER ./downloads
+```
+
+**Complete Reset**
+```bash
+docker-compose down
+docker system prune -a  # WARNING: removes all unused Docker data
+docker-compose build
+docker-compose up -d
+```
+
+#### What's Included
+
+The Docker setup automatically includes:
+- **Python 3.12** with latest yt-dlp
+- **FFmpeg** for video processing 
+- **Node.js & Deno** for YouTube compatibility
+- **Web interface** on port 5000
+- **Automatic updates** when you rebuild
+- **Volume mounting** so downloads persist
+- **Security** (runs as non-root user)
+
+#### Advantages of Docker
+
+- **No dependency hassles** - everything just works
+- **Consistent environment** across all operating systems
+- **Isolated** - won't conflict with other software
+- **Latest versions** of all tools included
+- **Easy updates** with `docker-compose build`
+- **Small footprint** using Alpine Linux (595MB total)
+
+That's it! You now have a fully functional YouTube downloader running in Docker.
 
 ---
 
