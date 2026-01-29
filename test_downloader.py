@@ -17,5 +17,9 @@ def test_basic_functionality():
 
     print(f"Video info retrieved: {info['title']}")
 
+
+def test_example_gui_start():
+    print("Example test")
+
 if __name__ == "__main__":
     test_basic_functionality()
