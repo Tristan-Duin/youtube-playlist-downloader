@@ -1,34 +1,19 @@
-# Python cache and build files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Virtual environments  
 venv/
 .venv/
 env/
-
-# Downloads directory (will be mounted as volume)
 downloads/
-
-# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *~
-
-# OS files
 .DS_Store
 Thumbs.db
-
-# Git
 .git/
 .gitignore
-
-# Testing
 .pytest_cache/
-
-# Documentation (not needed in container)
 *.md
 LICENSE

@@ -228,10 +228,7 @@ cd youtube-playlist-downloader
 
 **Step 2: Start the Application**
 ```bash
-# Start the web interface (runs in background)
 docker-compose up -d
-
-# Check that it's running
 docker-compose ps
 ```
 
@@ -258,7 +255,6 @@ docker-compose run --rm youtube-downloader-web python cli.py "https://www.youtub
 
 **Interactive Shell Access**
 ```bash
-# Access the container for debugging
 docker-compose run --rm youtube-downloader-web bash
 ```
 
@@ -266,34 +262,22 @@ docker-compose run --rm youtube-downloader-web bash
 
 **View Application Status**
 ```bash
-# Check if containers are running
 docker-compose ps
-
-# View real-time logs
 docker-compose logs -f
-
-# View logs from last session
 docker-compose logs youtube-downloader-web
 ```
 
 **Stop and Start**
 ```bash
-# Stop the application
 docker-compose down
-
-# Start it again
 docker-compose up -d
 
-# Restart the application
 docker-compose restart
 ```
 
 **Updates and Rebuilding**
 ```bash
-# After pulling code changes, rebuild the container
 docker-compose build
-
-# Or rebuild and restart in one command
 docker-compose up -d --build
 
 # Force rebuild without cache (if having issues)
@@ -304,20 +288,14 @@ docker-compose build --no-cache
 
 **Port Already in Use**
 ```bash
-# Stop any existing containers using port 5000
 docker ps | grep 5000
 docker stop <container_id>
-
-# Or change the port in docker-compose.yml
-# Change "5000:5000" to "8080:5000" then visit localhost:8080
 ```
 
 **Container Won't Start**
 ```bash
-# Check logs for errors
 docker-compose logs youtube-downloader-web
 
-# Rebuild from scratch
 docker-compose down
 docker-compose build --no-cache
 docker-compose up -d
@@ -325,13 +303,11 @@ docker-compose up -d
 
 **Downloads Folder Permissions (Linux/Mac)**
 ```bash
-# Fix permissions if downloads folder isn't writable
 sudo chown -R $USER:$USER ./downloads
 ```
 
 **Complete Reset**
 ```bash
-# Remove everything and start fresh
 docker-compose down
 docker system prune -a  # WARNING: removes all unused Docker data
 docker-compose build
@@ -341,22 +317,22 @@ docker-compose up -d
 #### What's Included
 
 The Docker setup automatically includes:
-- ✅ **Python 3.12** with latest yt-dlp
-- ✅ **FFmpeg** for video processing 
-- ✅ **Node.js & Deno** for YouTube compatibility
-- ✅ **Web interface** on port 5000
-- ✅ **Automatic updates** when you rebuild
-- ✅ **Volume mounting** so downloads persist
-- ✅ **Security** (runs as non-root user)
+- **Python 3.12** with latest yt-dlp
+- **FFmpeg** for video processing 
+- **Node.js & Deno** for YouTube compatibility
+- **Web interface** on port 5000
+- **Automatic updates** when you rebuild
+- **Volume mounting** so downloads persist
+- **Security** (runs as non-root user)
 
 #### Advantages of Docker
 
-- 🚀 **No dependency hassles** - everything just works
-- 🔄 **Consistent environment** across all operating systems
-- 🛡️ **Isolated** - won't conflict with other software
-- 📦 **Latest versions** of all tools included
-- 🔧 **Easy updates** with `docker-compose build`
-- 💾 **Small footprint** using Alpine Linux (595MB total)
+- **No dependency hassles** - everything just works
+- **Consistent environment** across all operating systems
+- **Isolated** - won't conflict with other software
+- **Latest versions** of all tools included
+- **Easy updates** with `docker-compose build`
+- **Small footprint** using Alpine Linux (595MB total)
 
 That's it! You now have a fully functional YouTube downloader running in Docker.
 
