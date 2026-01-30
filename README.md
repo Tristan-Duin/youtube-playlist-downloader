@@ -314,27 +314,16 @@ docker-compose build
 docker-compose up -d
 ```
 
-#### What's Included
+---
 
-The Docker setup automatically includes:
-- **Python 3.12** with latest yt-dlp
-- **FFmpeg** for video processing 
-- **Node.js & Deno** for YouTube compatibility
-- **Web interface** on port 5000
-- **Automatic updates** when you rebuild
-- **Volume mounting** so downloads persist
-- **Security** (runs as non-root user)
+## Testing
 
-#### Advantages of Docker
+### PyTest commands unit tests and integration tests
+```bash
+python -m pytest .\tests\
 
-- **No dependency hassles** - everything just works
-- **Consistent environment** across all operating systems
-- **Isolated** - won't conflict with other software
-- **Latest versions** of all tools included
-- **Easy updates** with `docker-compose build`
-- **Small footprint** using Alpine Linux (595MB total)
-
-That's it! You now have a fully functional YouTube downloader running in Docker.
+python -m pytest .\tests\ -v
+```
 
 ---
 
