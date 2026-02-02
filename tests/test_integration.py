@@ -1,3 +1,8 @@
+"""
+Integration tests to validate that the downloader can successfully take a 
+YouTube URL and obtain the video information without conducting a full
+download to save time for running tests.
+"""
 from src.youtube_downloader import YouTubeDownloader
 from src.config import setup_directories
 

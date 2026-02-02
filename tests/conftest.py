@@ -1,3 +1,6 @@
+"""
+Configuration provided to support, simplify, and standardize across our tests.
+"""
 import pytest
 from pathlib import Path
 import tempfile

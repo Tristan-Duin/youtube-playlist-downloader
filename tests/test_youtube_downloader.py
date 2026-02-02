@@ -1,3 +1,6 @@
+"""
+Test core functionality of the downloader and ensure it is within expected behavior.
+"""
 import pytest
 from unittest.mock import Mock, patch
 from src.youtube_downloader import YouTubeDownloader

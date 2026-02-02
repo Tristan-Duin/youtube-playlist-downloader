@@ -1,3 +1,6 @@
+"""
+Testing basic configuration defaults work and directories are successfully created if needed.
+"""
 import pytest
 from pathlib import Path
 from unittest.mock import patch

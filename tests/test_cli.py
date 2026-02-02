@@ -1,3 +1,6 @@
+"""
+Test different ways to use the application's CLI and ensure it functions within expected behavior.
+"""
 import pytest
 import sys
 from unittest.mock import patch, Mock
