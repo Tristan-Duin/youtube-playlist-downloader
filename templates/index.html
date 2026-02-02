@@ -5,18 +5,51 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>YouTube Downloader</h1>
-        
-        <form id="form">
-            <input type="url" id="url-input" placeholder="YouTube URL" required>
-            <button type="submit" id="download-btn">Download</button>
-        </form>
-        
-        <div id="message"></div>
-        <div id="status">Ready</div>
-    </div>
+<div class="container">
+    <h1>YouTube Downloader</h1>
 
-    <script src="{{ url_for('static', filename='js/downloader.js') }}"></script>
+    <form id="form">
+        <!-- MP3/MP4 Selection -->
+        <div style="margin-bottom: 10px;">
+            <label class="radio-option">
+                <input type="radio" name="format" value="mp3" checked onclick="toggleResolution(false)">
+                <span>MP3 (audio only)</span>
+            </label>
+
+            <label class="radio-option">
+                <input type="radio" name="format" value="mp4" onclick="toggleResolution(true)">
+                <span>MP4 (video)</span>
+            </label>
+        </div>
+
+        <!-- Resolution dropdown (hidden by default) -->
+        <div id="resolution-box" style="display: none; margin-bottom: 15px;">
+            <label for="resolution">Preferred Resolution</label><br>
+            <select name="resolution" id="resolution">
+                <option value="1080">1080p</option>
+                <option value="720" selected>720p</option>
+                <option value="480">480p</option>
+                <option value="360">360p</option>
+            </select>
+        </div>
+
+        <input type="url" id="url-input" name="url" placeholder="YouTube URL" required>
+        <button type="submit" id="download-btn">Download</button>
+    </form>
+
+    <div id="message"></div>
+    <div id="status">Ready</div>
+</div>
+
+<!-- Resolution Script -->
+<script>
+    function toggleResolution(show) {
+        const box = document.getElementById("resolution-box");
+        if (!box) return;
+        box.style.display = show ? "block" : "none";
+    }
+</script>
+
+<script src="{{ url_for('static', filename='js/downloader.js') }}"></script>
 </body>
 </html>

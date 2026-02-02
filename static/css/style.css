@@ -86,3 +86,16 @@ button:disabled {
     color: #11c43b;
     font-weight: bold;
 }
+
+/* radio button styles */
+.radio-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+    margin: 0;
+}
