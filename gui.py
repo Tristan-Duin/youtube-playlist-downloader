@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 setup_directories()
 downloader = YouTubeDownloader()
-#test-test#2
+
 download_status = {
     'in_progress': False,
     'messages': [],

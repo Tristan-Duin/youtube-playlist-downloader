@@ -9,27 +9,55 @@
     <h1>YouTube Downloader</h1>
 
     <form id="form">
-        <!-- MP3/MP4 Selection -->
-        <div style="margin-bottom: 10px;">
+        <!-- MP3/MP4/MP4_Playlist Selection -->
+        <div class="format-row">
             <label class="radio-option">
-                <input type="radio" name="format" value="mp3" checked onclick="toggleResolution(false)">
-                <span>MP3 (audio only)</span>
+                <input type="radio" name="format" value="mp3" checked onchange="toggleOptions()">
+                <span class="radio-text">
+                MP3<br>
+                <span class="radio-sub">(audio only)</span>
+                </span>
             </label>
 
             <label class="radio-option">
-                <input type="radio" name="format" value="mp4" onclick="toggleResolution(true)">
-                <span>MP4 (video)</span>
+                <input type="radio" name="format" value="mp4" onchange="toggleOptions()">
+                <span class="radio-text">
+                MP4<br>
+                <span class="radio-sub">(video)</span>
+                </span>
+            </label>
+
+            <label class="radio-option">
+                <input type="radio" name="format" value="mp4_playlist" onchange="toggleOptions()">
+                <span class="radio-text">
+                MP4<br>
+                <span class="radio-sub">(playlist)</span>
+                </span>
             </label>
         </div>
 
-        <!-- Resolution dropdown (hidden by default) -->
-        <div id="resolution-box" style="display: none; margin-bottom: 15px;">
-            <label for="resolution">Preferred Resolution</label><br>
+        <!-- Resolution dropdown (MP4 + MP4 playlist only) -->
+        <div id="resolution-box" class="option-box" style="display: none;">
+        <label for="resolution">Preferred Resolution</label><br>
             <select name="resolution" id="resolution">
                 <option value="1080">1080p</option>
                 <option value="720" selected>720p</option>
                 <option value="480">480p</option>
                 <option value="360">360p</option>
+            </select>
+        </div>
+
+        <!-- Bitrate dropdown (MP3 only) -->
+        <div id="bitrate-box" class="option-box" style="display: none;">
+        <label for="bitrate">Preferred Bitrate</label>
+            <select name="bitrate" id="bitrate">
+                <option value="best" selected>Best available</option>
+                <option value="320">320 kbps</option>
+                <option value="256">256 kbps</option>
+                <option value="192">192 kbps</option>
+                <option value="160">160 kbps</option>
+                <option value="128">128 kbps</option>
+                <option value="96">96 kbps</option>
             </select>
         </div>
 
@@ -41,15 +69,26 @@
     <div id="status">Ready</div>
 </div>
 
-<!-- Resolution Script -->
+<!-- Options Toggle Script -->
 <script>
-    function toggleResolution(show) {
-        const box = document.getElementById("resolution-box");
-        if (!box) return;
-        box.style.display = show ? "block" : "none";
+    function toggleOptions() {
+      const selected = document.querySelector('input[name="format"]:checked')?.value;
+
+      const resolutionBox = document.getElementById("resolution-box");
+      const bitrateBox = document.getElementById("bitrate-box");
+
+      const isMp3 = (selected === "mp3");
+      const isMp4 = (selected === "mp4" || selected === "mp4_playlist");
+
+      if (resolutionBox) resolutionBox.style.display = isMp4 ? "flex" : "none";
+      if (bitrateBox) bitrateBox.style.display = isMp3 ? "flex" : "none";
     }
+
+    document.addEventListener("DOMContentLoaded", toggleOptions);
 </script>
+
 
 <script src="{{ url_for('static', filename='js/downloader.js') }}"></script>
 </body>
 </html>
+
