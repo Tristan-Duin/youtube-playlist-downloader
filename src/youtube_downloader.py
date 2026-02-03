@@ -1,4 +1,5 @@
 import yt_dlp
+import os
 from pathlib import Path
 from .config import DOWNLOADS_DIR, DEFAULT_FORMAT
 
@@ -7,7 +8,11 @@ class YouTubeDownloader:
         self.output_dir = DOWNLOADS_DIR
         self.output_dir.mkdir(exist_ok=True)
     
-    def download_video(self, url):
+    """ Parameters added for arguments: Refactor for clarity 
+        noVid = {bool} option to DL mp3 only
+        copyVid = {bool} option to copy the download to a specified folder
+        copyDest = {str} path of destination folder for copy """
+    def download_video(self, url, noVid, copyVid, copyDest):
         try:
             ydl_opts = {
                 'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
@@ -37,13 +42,19 @@ class YouTubeDownloader:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
             
-            print(f"Successfully downloaded video from: {url}")
+            print(f"Successfully downloaded video from: {url}") 
+
+            if (copyVid):
+                waffle = str(ydl('%(title)s.%(ext)s'))
+                print(waffle)
+                self._copy_to_destination(copyDest)
+
             return True
             
         except Exception as e:
             print(f"Primary download failed: {str(e)}")
             print("Trying fallback with simpler format selection...")
-            return self._try_fallback_download(url)
+            return self._try_fallback_download(url, noVid, copyVid, copyDest)
     
     def get_video_info(self, url):
         try:
@@ -75,7 +86,7 @@ class YouTubeDownloader:
             print(f"Error getting video info: {str(e)}")
             return None
     
-    def _try_fallback_download(self, url):
+    def _try_fallback_download(self, url, noVid, copyVid, copyDest):
         try:
             ydl_opts = {
                 'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
@@ -100,9 +111,31 @@ class YouTubeDownloader:
                 ydl.download([url])
             
             print(f"Fallback download successful for: {url}")
+
+            if (copyVid):
+                self._copy_to_destination(copyDest)
+
             return True
             
         except Exception as e:
             print(f"Fallback download also failed: {str(e)}")
             print("Video may not be available or have restrictions.")
             return False
+        
+    def _copy_to_destination(self, copyDest):
+        """ TO-DO: Clean-up messaging and exceptions.
+          (currently reports "Created" if already exists)
+          Add specific cases for created, blank if exists, exception types."""
+        try:
+            os.makedirs(copyDest,exist_ok=True)
+            print(f"Directory '{copyDest}' created")
+        
+        except Exception as e:
+            print(f"Copy Destination Path Invalid.")
+            print({str(e)})
+
+        """ TO-DO: Code for copying the actual downloaded file.
+            Get filename from YT-DLP???"""
+        
+                              
+                              
