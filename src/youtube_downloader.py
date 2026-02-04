@@ -9,7 +9,7 @@ class YouTubeDownloader:
     
     def download_video(self, url, noVid, copyDest):
 
-        # TO-DO: Set default value for a 'format' variable, and update for Mp3 Only option
+        # TODO: Implement download format selection. Issue-32
         try:
             ydl_opts = {
                 'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
@@ -40,7 +40,7 @@ class YouTubeDownloader:
                 ydl.download([url])
 
             print(f"Successfully downloaded video from: {url}") 
-            if (copyDest != "none"):
+            if (copyDest != None):
                 self._copy_to_dest(copyDest)
             return True
             
@@ -126,7 +126,7 @@ class YouTubeDownloader:
             print(f"Copy Destination Path Invalid.")
             print({str(e)})
 
-        # TO-DO: Code for copying the actual downloaded file.
+        # TODO: Implement code using shutil.copy2 for copying the downloaded file. Issue-33
         
                               
                               

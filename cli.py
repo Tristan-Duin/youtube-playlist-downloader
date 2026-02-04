@@ -3,14 +3,13 @@ from src.youtube_downloader import YouTubeDownloader
 from src.config import setup_directories
 
 def main():
-    print("\nYouTube Downloader MVP - College Project\n")
+    print("\nYouTube Downloader - College Project\n")
 
     # Initialize Option variables to default values
-    copyDest = "none"
+    copyDest = None
     noVid = False
     
-    # Rudimentary parsing of args. We might need additional logic for validation.
-    
+    # TODO: Replace rudimentary argument system with argument definitions using Typer library. Issue-34
     i = 0
     while i < len(sys.argv):
         match sys.argv[i].casefold():
@@ -20,13 +19,12 @@ def main():
             case '--audio' | '--a':
                 noVid = True
 
-            case '--help' | '--?':
+            case '--help' | '--h':
            
                 print("USAGE: python cli.py [options] [videolink]")
-                print("\nwhere")
                 print("\n    videolink:                   \"https://www.youtube.com/watch?v=VIDEO_ID\"")
                 print("\n    options:")
-                print("         --help  | --?           Display this help message.")      
+                print("         --help  | --h           Display this help message.")      
                 print("         --audio | --a           Download audio (Mp3) only.")
                 print("         --copy  | --c  [path]   Copy download to specified folder path.\n")
                 sys.exit(1)
@@ -34,11 +32,11 @@ def main():
 
     # Required Arg for URL should be at end of the array
     url = sys.argv[(len(sys.argv)-1)]
-
+    # TODO: Refactor this error message to "'Usage: python cli.py --help' for additional information." Issue-34
     if len(sys.argv) < 2:
         print("Usage: python cli.py \"https://www.youtube.com/watch?v=VIDEO_ID\"")
         sys.exit(1)
-    
+    # TODO: Refactor this block into an "Https://" argument definition to ensure link is a valid youtube video link. Issue-34"
     if not url.startswith(('https://www.youtube.com/', 'https://youtu.be/')):
         print("Error: Please provide a valid YouTube URL")
         sys.exit(1)
