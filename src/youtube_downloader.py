@@ -7,7 +7,9 @@ class YouTubeDownloader:
         self.output_dir = DOWNLOADS_DIR
         self.output_dir.mkdir(exist_ok=True)
     
-    def download_video(self, url):
+    def download_video(self, url, noVid, copyDest):
+
+        # TODO: Implement download format selection. Issue-32
         try:
             ydl_opts = {
                 'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
@@ -33,17 +35,19 @@ class YouTubeDownloader:
                 'ignoreerrors': False,
                 'no_warnings': False,
             }
-            
+
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
-            
-            print(f"Successfully downloaded video from: {url}")
+
+            print(f"Successfully downloaded video from: {url}") 
+            if (copyDest != None):
+                self._copy_to_dest(copyDest)
             return True
             
         except Exception as e:
             print(f"Primary download failed: {str(e)}")
             print("Trying fallback with simpler format selection...")
-            return self._try_fallback_download(url)
+            return self._try_fallback_download(url, noVid, copyDest)
     
     def get_video_info(self, url):
         try:
@@ -75,7 +79,7 @@ class YouTubeDownloader:
             print(f"Error getting video info: {str(e)}")
             return None
     
-    def _try_fallback_download(self, url):
+    def _try_fallback_download(self, url, noVid, copyDest):
         try:
             ydl_opts = {
                 'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
@@ -100,9 +104,29 @@ class YouTubeDownloader:
                 ydl.download([url])
             
             print(f"Fallback download successful for: {url}")
+            if (copyDest !="none"):
+                self._copy_to_dest(copyDest)
             return True
             
         except Exception as e:
             print(f"Fallback download also failed: {str(e)}")
             print("Video may not be available or have restrictions.")
             return False
+        
+    def _copy_to_dest(self, copyDest):
+
+        try:
+            # Create directory structure for copyDest, begining at system root
+            p = Path(copyDest)
+            p.mkdir(parents = True, exist_ok = True)
+            print(f"Directory '{p}' created")
+            
+        
+        except Exception as e:
+            print(f"Copy Destination Path Invalid.")
+            print({str(e)})
+
+        # TODO: Implement code using shutil.copy2 for copying the downloaded file. Issue-33
+        
+                              
+                              
