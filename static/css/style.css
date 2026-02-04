@@ -86,3 +86,43 @@ button:disabled {
     color: #11c43b;
     font-weight: bold;
 }
+
+/* radio button styles */
+.format-row{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: nowrap;
+}
+
+.radio-option{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.radio-option input{
+  margin: 0;
+}
+
+.radio-text {
+  white-space: nowrap;
+}
+
+/* option box centering */
+.option-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.option-box label {
+  margin-bottom: 6px;
+}
+
+.option-box select {
+  text-align: center;
+}
