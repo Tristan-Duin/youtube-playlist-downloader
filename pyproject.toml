@@ -1,3 +1,6 @@
+# Modern Python project configuration file that consolidates all project metadata, dependencies, build configuration,
+# and tool settings into one, replacing the need for multiple files like requirements.txt configuration files.
+
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
