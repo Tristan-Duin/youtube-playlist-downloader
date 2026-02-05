@@ -55,7 +55,7 @@ def test_download_video_success(mock_ytdl_class, downloader, capsys):
     mock_ytdl.download.return_value = None  # Pretty sure if no exception is thrown that means success
     mock_ytdl_class.return_value.__enter__.return_value = mock_ytdl
     
-    result = downloader.download_video('https://www.youtube.com/watch?v=test')
+    result = downloader.download_video('https://www.youtube.com/watch?v=test', False, None)
     
     assert result is True
     mock_ytdl.download.assert_called_once_with(['https://www.youtube.com/watch?v=test'])
@@ -72,9 +72,9 @@ def test_download_video_with_fallback(mock_fallback, mock_ytdl_class, downloader
     
     mock_fallback.return_value = True
     
-    result = downloader.download_video('https://www.youtube.com/watch?v=test')
+    result = downloader.download_video('https://www.youtube.com/watch?v=test', False, None)
     
     assert result is True
-    mock_fallback.assert_called_once_with('https://www.youtube.com/watch?v=test')
+    mock_fallback.assert_called_once_with('https://www.youtube.com/watch?v=test', False, None)
     captured = capsys.readouterr()
     assert "Primary download failed" in captured.out

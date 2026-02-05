@@ -40,7 +40,7 @@ def test_main_successful_download(mock_downloader_class, mock_setup, mock_video_
     
     mock_setup.assert_called_once()
     mock_downloader.get_video_info.assert_called_once_with(url)
-    mock_downloader.download_video.assert_called_once_with(url)
+    mock_downloader.download_video.assert_called_once_with(url, False, None)
     
     captured = capsys.readouterr()
     assert "Download completed!" in captured.out

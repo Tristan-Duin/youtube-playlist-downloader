@@ -8,6 +8,13 @@ __pycache__/
 *.so
 venv/
 env/
+.venv/
+
+# Build artifacts
+*.egg-info/
+build/
+dist/
+.eggs/
 
 # Other
 .vscode/
