@@ -1,5 +1,0 @@
-yt-dlp>=2025.12.08
-flask==3.0.0
-werkzeug==3.0.1
-pytest>=8.0.0
-pytest-mock>=3.12.0

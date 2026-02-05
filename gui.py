@@ -64,7 +64,7 @@ def download_worker(url):
             add_message("")
         
         add_message("Starting download...")
-        success = downloader.download_video(url)
+        success = downloader.download_video(url, False, None)
         
         if success:
             add_message("Download completed!")
@@ -77,5 +77,9 @@ def download_worker(url):
     finally:
         download_status['in_progress'] = False
 
-if __name__ == "__main__":
+def main():
+    """Entry point for the GUI application."""
     app.run(debug=False, host='0.0.0.0', port=5000)
+
+if __name__ == "__main__":
+    main()
