@@ -24,6 +24,7 @@ def download():
         return jsonify({'error': 'Download already in progress'}), 400
     
     url = request.form.get('url', '').strip()
+    custom_directory = request.form.get('custom_directory', '').strip() or None
     
     if not url:
         return jsonify({'error': 'Please enter a YouTube URL'}), 400
@@ -34,7 +35,7 @@ def download():
     download_status['messages'] = []
     download_status['in_progress'] = True
     download_status['current_video'] = None
-    thread = threading.Thread(target=download_worker, args=(url,))
+    thread = threading.Thread(target=download_worker, args=(url, custom_directory))
     thread.daemon = True
     thread.start()
     
@@ -47,7 +48,7 @@ def status():
 def add_message(message):
     download_status['messages'].append(message)
 
-def download_worker(url):
+def download_worker(url, custom_directory=None):
     try:
         add_message("Getting video information...")
         
@@ -64,10 +65,13 @@ def download_worker(url):
             add_message("")
         
         add_message("Starting download...")
-        success = downloader.download_video(url, False, None)
+        success = downloader.download_video(url, False, custom_directory)
         
         if success:
-            add_message("Download completed!")
+            if custom_directory:
+                add_message(f"Download completed and copied to: {custom_directory}")
+            else:
+                add_message("Download completed!")
         else:
             add_message("Download failed.")
             
