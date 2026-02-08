@@ -2,16 +2,19 @@ import yt_dlp
 import shutil
 import os
 from pathlib import Path
+from typing import Optional, Dict, Any, Tuple, List
 from .config import DOWNLOADS_DIR, DEFAULT_FORMAT
 
 class YouTubeDownloader:
-    def __init__(self):
+    def __init__(self) -> None:
         self.output_dir = DOWNLOADS_DIR
         self.output_dir.mkdir(exist_ok=True)
     
-    def download_video(self, url, noVid, copyDest):
+    def download_video(self, url: str, noVid: bool, copyDest: Optional[str]) -> bool:
+        # copyDest: optional custom directory to copy downloaded files to
         try:
             downloads_path = Path(self.output_dir)
+            # Track existing files to identify newly downloaded ones
             files_before = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
             
             ydl_opts = {
@@ -44,6 +47,7 @@ class YouTubeDownloader:
 
             print(f"Successfully downloaded video from: {url}")
             
+            # Do the coping of files to custom directory if specified
             if copyDest:
                 files_after = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
                 new_files = files_after - files_before
@@ -59,7 +63,7 @@ class YouTubeDownloader:
             print("Trying fallback with simpler format selection...")
             return self._try_fallback_download(url, noVid, copyDest)
     
-    def get_video_info(self, url):
+    def get_video_info(self, url: str) -> Optional[Dict[str, Any]]:
         try:
             ydl_opts = {
                 'quiet': True,
@@ -89,7 +93,7 @@ class YouTubeDownloader:
             print(f"Error getting video info: {str(e)}")
             return None
     
-    def _try_fallback_download(self, url, noVid, copyDest):
+    def _try_fallback_download(self, url: str, noVid: bool, copyDest: Optional[str]) -> bool:
         try:
             downloads_path = Path(self.output_dir)
             files_before = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
@@ -133,19 +137,24 @@ class YouTubeDownloader:
             print("Video may not be available or have restrictions.")
             return False
         
-    def _validate_path(self, path):
+    def _validate_path(self, path: str) -> Tuple[bool, str]:
+        """Validate that the destination path is safe and accessible."""
         try:
             path_obj = Path(path).resolve()
+            # Ensure path is an absolute path
             if not path_obj.is_absolute():
                 return False, "Path must be absolute"
+            # Create directory structure if it doesn't already exist
             path_obj.mkdir(parents=True, exist_ok=True)
+            # Verify write permissions
             if not os.access(path_obj.parent, os.W_OK):
                 return False, "No write permission to destination directory"
             return True, str(path_obj)
         except Exception as e:
             return False, f"Invalid path: {str(e)}"
     
-    def _copy_specific_files(self, copyDest, filenames):
+    def _copy_specific_files(self, copyDest: str, filenames: List[str]) -> None:
+        """Copy specified files from downloads directory to custom destination."""
         if not copyDest or not filenames:
             return
             

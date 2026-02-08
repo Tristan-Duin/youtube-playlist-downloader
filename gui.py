@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import threading
+from typing import Optional
 from src.youtube_downloader import YouTubeDownloader
 from src.config import setup_directories
 
@@ -24,6 +25,7 @@ def download():
         return jsonify({'error': 'Download already in progress'}), 400
     
     url = request.form.get('url', '').strip()
+    # Get custom directory from form, convert empty string to None
     custom_directory = request.form.get('custom_directory', '').strip() or None
     
     if not url:
@@ -35,6 +37,7 @@ def download():
     download_status['messages'] = []
     download_status['in_progress'] = True
     download_status['current_video'] = None
+    # Pass custom directory to worker thread
     thread = threading.Thread(target=download_worker, args=(url, custom_directory))
     thread.daemon = True
     thread.start()
@@ -45,10 +48,10 @@ def download():
 def status():
     return jsonify(download_status)
 
-def add_message(message):
+def add_message(message: str) -> None:
     download_status['messages'].append(message)
 
-def download_worker(url, custom_directory=None):
+def download_worker(url: str, custom_directory: Optional[str] = None) -> None:
     try:
         add_message("Getting video information...")
         
@@ -65,9 +68,11 @@ def download_worker(url, custom_directory=None):
             add_message("")
         
         add_message("Starting download...")
+        # Pass custom directory to downloader for file copying
         success = downloader.download_video(url, False, custom_directory)
         
         if success:
+            # Show different message based on whether files were copied
             if custom_directory:
                 add_message(f"Download completed and copied to: {custom_directory}")
             else:
@@ -81,7 +86,7 @@ def download_worker(url, custom_directory=None):
     finally:
         download_status['in_progress'] = False
 
-def main():
+def main() -> None:
     """Entry point for the GUI application."""
     app.run(debug=False, host='0.0.0.0', port=5000)
 

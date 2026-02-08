@@ -33,7 +33,7 @@ const toggleCustomDirectory = () => {
 document.addEventListener('DOMContentLoaded', () => {
     toggleOptions();
     
-    // Event listeners
+    // Event listeners for format toggles and custom directory
     document.querySelectorAll('input[name="format"]').forEach(radio => {
         radio.addEventListener('change', toggleOptions);
     });
@@ -48,6 +48,7 @@ const handleFormSubmit = async (e) => {
     e.preventDefault();
     
     const url = document.getElementById('url-input').value;
+    // Check if custom directory feature is enabled
     const useCustomDir = document.getElementById('use-custom-dir').checked;
     const customDirectory = useCustomDir ? document.getElementById('custom-directory').value.trim() : '';
     
@@ -60,6 +61,7 @@ const handleFormSubmit = async (e) => {
         return;
     }
 
+    // Include custom_directory in form data only if specified
     const formData = new URLSearchParams({ url: url, ...(useCustomDir && customDirectory && { custom_directory: customDirectory }) });
     
     try {
