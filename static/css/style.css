@@ -167,3 +167,77 @@ button:disabled {
   margin-bottom: 5px;
 }
 
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.tabs .tab-btn {
+    width: auto;
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    background: #f7f7f7;
+    color: #333;
+}
+
+.tabs .tab-btn:hover:not(:disabled) {
+    background: #efefef;
+}
+
+.tabs .tab-btn.active {
+    background: #e6f0ff;
+    border-color: #007bff;
+    color: #0b3d75;
+    font-weight: 600;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.tab-title {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #0b3d75;
+}
+
+/* Settings / FFmpeg verify */
+.setting-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-inline {
+    width: auto;
+    padding: 10px 14px;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 2px solid #ddd;
+    font-size: 14px;
+    background: #f8f9fa;
+}
+
+.status-pill.ok {
+    border-color: #11c43b;
+    background: #dff5df;
+}
+
+.status-pill.bad {
+    border-color: #df0c21;
+    background: #ffe0e0;
+}
+
+.status-pill.neutral {
+    border-color: #ddd;
+    background: #f3f3f3;
+}

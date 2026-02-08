@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 import threading
 from typing import Optional
+import shutil
+import subprocess
+
 from src.youtube_downloader import YouTubeDownloader
 from src.config import setup_directories
 
@@ -19,29 +22,67 @@ download_status = {
 def index():
     return render_template('index.html')
 
+@app.get('/api/verify-ffmpeg')
+def verify_ffmpeg():
+    ffmpeg_path = shutil.which('ffmpeg')
+    if not ffmpeg_path:
+        return jsonify({'ok': False}), 200
+
+    try:
+        completed = subprocess.run(
+            [ffmpeg_path, '-version'],
+            capture_output=True,
+            text=True,
+            timeout=3
+        )
+        return jsonify({'ok': completed.returncode == 0}), 200
+    except Exception:
+        return jsonify({'ok': False}), 200
+
 @app.route('/download', methods=['POST'])
 def download():
     if download_status['in_progress']:
         return jsonify({'error': 'Download already in progress'}), 400
-    
+
     url = request.form.get('url', '').strip()
-    # Get custom directory from form, convert empty string to None
+
+    selected_format = (request.form.get('format', 'mp3') or 'mp3').strip().lower()
+    resolution = (request.form.get('resolution', '720') or '720').strip()
+    bitrate = (request.form.get('bitrate', 'best') or 'best').strip()
+
     custom_directory = request.form.get('custom_directory', '').strip() or None
-    
+
     if not url:
         return jsonify({'error': 'Please enter a YouTube URL'}), 400
-    
+
     if not url.startswith(('https://www.youtube.com/', 'https://youtu.be/')):
         return jsonify({'error': 'Please provide a valid YouTube URL'}), 400
-    
+
+    # This release: no playlist download-all support (reject playlist URLs)
+    lowered = url.lower()
+    if 'list=' in lowered or '/playlist' in lowered:
+        return jsonify({'error': 'Playlist downloads are not supported in this release'}), 400
+
+    if selected_format not in ('mp3', 'mp4'):
+        return jsonify({'error': 'Please choose MP3 or MP4'}), 400
+
+    if selected_format == 'mp4' and resolution not in ('1080', '720', '480', '360'):
+        return jsonify({'error': 'Invalid resolution selection'}), 400
+
+    if selected_format == 'mp3' and bitrate not in ('best', '320', '256', '192', '160', '128', '96'):
+        return jsonify({'error': 'Invalid bitrate selection'}), 400
+
     download_status['messages'] = []
     download_status['in_progress'] = True
     download_status['current_video'] = None
-    # Pass custom directory to worker thread
-    thread = threading.Thread(target=download_worker, args=(url, custom_directory))
+
+    thread = threading.Thread(
+        target=download_worker,
+        args=(url, selected_format, resolution, bitrate, custom_directory)
+    )
     thread.daemon = True
     thread.start()
-    
+
     return jsonify({'success': 'Download started'})
 
 @app.route('/status')
@@ -51,12 +92,12 @@ def status():
 def add_message(message: str) -> None:
     download_status['messages'].append(message)
 
-def download_worker(url: str, custom_directory: Optional[str] = None) -> None:
+def download_worker(url: str, selected_format: str, resolution: str, bitrate: str, custom_directory: Optional[str] = None) -> None:
     try:
         add_message("Getting video information...")
-        
+
         info = downloader.get_video_info(url)
-        
+
         if info:
             download_status['current_video'] = info
             add_message(f"Title: {info['title']}")
@@ -66,23 +107,28 @@ def download_worker(url: str, custom_directory: Optional[str] = None) -> None:
                 seconds = info['duration'] % 60
                 add_message(f"Duration: {minutes}m {seconds}s")
             add_message("")
-        
+
         add_message("Starting download...")
-        # Pass custom directory to downloader for file copying
-        success = downloader.download_video(url, False, custom_directory)
-        
+
+        success = downloader.download_media(
+            url=url,
+            selected_format=selected_format,
+            resolution=resolution,
+            bitrate=bitrate,
+            copyDest=custom_directory
+        )
+
         if success:
-            # Show different message based on whether files were copied
             if custom_directory:
                 add_message(f"Download completed and copied to: {custom_directory}")
             else:
                 add_message("Download completed!")
         else:
             add_message("Download failed.")
-            
+
     except Exception as e:
         add_message(f"Error: {str(e)}")
-    
+
     finally:
         download_status['in_progress'] = False
 

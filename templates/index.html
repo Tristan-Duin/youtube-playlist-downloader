@@ -8,76 +8,91 @@
 <div class="container">
     <h1>YouTube Downloader</h1>
 
-    <form id="form">
-        <div class="format-row">
-            <label class="radio-option">
-                <input type="radio" name="format" value="mp3" checked>
-                <span class="radio-text">
-                MP3<br>
-                <span class="radio-sub">(audio only)</span>
-                </span>
-            </label>
+    <div class="tabs">
+        <button type="button" class="tab-btn active" data-tab="tab-application">Application</button>
+        <button type="button" class="tab-btn" data-tab="tab-history">History</button>
+        <button type="button" class="tab-btn" data-tab="tab-settings">Settings</button>
+    </div>
 
-            <label class="radio-option">
-                <input type="radio" name="format" value="mp4">
-                <span class="radio-text">
-                MP4<br>
-                <span class="radio-sub">(video)</span>
-                </span>
-            </label>
+    <section id="tab-application" class="tab-panel active">
+        <form id="form">
+            <div class="format-row">
+                <label class="radio-option">
+                    <input type="radio" name="format" value="mp3" checked>
+                    <span class="radio-text">
+                    MP3<br>
+                    <span class="radio-sub">(audio only)</span>
+                    </span>
+                </label>
 
-            <label class="radio-option">
-                <input type="radio" name="format" value="mp4_playlist">
-                <span class="radio-text">
-                MP4<br>
-                <span class="radio-sub">(playlist)</span>
-                </span>
-            </label>
-        </div>
-
-        <div id="resolution-box" class="option-box" style="display: none;">
-            <label for="resolution">Preferred Resolution</label>
-            <select name="resolution" id="resolution">
-                <option value="1080">1080p</option>
-                <option value="720" selected>720p</option>
-                <option value="480">480p</option>
-                <option value="360">360p</option>
-            </select>
-        </div>
-
-        <div id="bitrate-box" class="option-box">
-            <label for="bitrate">Preferred Bitrate</label>
-            <select name="bitrate" id="bitrate">
-                <option value="best" selected>Best available</option>
-                <option value="320">320 kbps</option>
-                <option value="256">256 kbps</option>
-                <option value="192">192 kbps</option>
-                <option value="160">160 kbps</option>
-                <option value="128">128 kbps</option>
-                <option value="96">96 kbps</option>
-            </select>
-        </div>
-
-        <div class="option-box">
-            <label class="toggle-label">
-                <input type="checkbox" id="use-custom-dir">
-                Use custom output directory
-            </label>
-            
-            <div id="custom-dir-input" class="custom-dir-input">
-                <label for="custom-directory">Output Directory</label>
-                <input type="text" id="custom-directory" name="custom_directory" placeholder="Enter absolute path (Example: C:\Users\Tristan\Videos)">
+                <label class="radio-option">
+                    <input type="radio" name="format" value="mp4">
+                    <span class="radio-text">
+                    MP4<br>
+                    <span class="radio-sub">(video)</span>
+                    </span>
+                </label>
             </div>
+
+            <div id="resolution-box" class="option-box" style="display: none;">
+                <label for="resolution">Preferred Resolution</label>
+                <select name="resolution" id="resolution">
+                    <option value="1080">1080p</option>
+                    <option value="720" selected>720p</option>
+                    <option value="480">480p</option>
+                    <option value="360">360p</option>
+                </select>
+            </div>
+
+            <div id="bitrate-box" class="option-box">
+                <label for="bitrate">Preferred Bitrate</label>
+                <select name="bitrate" id="bitrate">
+                    <option value="best" selected>Best available</option>
+                    <option value="320">320 kbps</option>
+                    <option value="256">256 kbps</option>
+                    <option value="192">192 kbps</option>
+                    <option value="160">160 kbps</option>
+                    <option value="128">128 kbps</option>
+                    <option value="96">96 kbps</option>
+                </select>
+            </div>
+
+            <div class="option-box">
+                <label class="toggle-label">
+                    <input type="checkbox" id="use-custom-dir">
+                    Use custom output directory
+                </label>
+
+                <div id="custom-dir-input" class="custom-dir-input">
+                    <label for="custom-directory">Output Directory</label>
+                    <input type="text" id="custom-directory" name="custom_directory" placeholder="Enter absolute path (Example: C:\Users\Tristan\Videos)">
+                </div>
+            </div>
+
+            <input type="url" id="url-input" name="url" placeholder="YouTube URL" required>
+            <button type="submit" id="download-btn">Download</button>
+        </form>
+
+        <div id="message"></div>
+        <div id="status">Ready</div>
+    </section>
+
+    <section id="tab-history" class="tab-panel">
+        <h2 class="tab-title">History</h2>
+        <p>Coming soon.</p>
+    </section>
+
+    <section id="tab-settings" class="tab-panel">
+        <h2 class="tab-title">Settings</h2>
+
+        <div class="setting-row">
+            <button type="button" id="ffmpeg-verify-btn" class="btn-inline">Verify FFmpeg</button>
+            <span id="ffmpeg-status" class="status-pill neutral">Not checked</span>
         </div>
-
-        <input type="url" id="url-input" name="url" placeholder="YouTube URL" required>
-        <button type="submit" id="download-btn">Download</button>
-    </form>
-
-    <div id="message"></div>
-    <div id="status">Ready</div>
+    </section>
 </div>
 
 <script src="{{ url_for('static', filename='js/downloader.js') }}"></script>
 </body>
 </html>
+
