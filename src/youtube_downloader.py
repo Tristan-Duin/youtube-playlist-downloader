@@ -1,16 +1,22 @@
 import yt_dlp
+import shutil
+import os
 from pathlib import Path
+from typing import Optional, Dict, Any, Tuple, List
 from .config import DOWNLOADS_DIR, DEFAULT_FORMAT
 
 class YouTubeDownloader:
-    def __init__(self):
+    def __init__(self) -> None:
         self.output_dir = DOWNLOADS_DIR
         self.output_dir.mkdir(exist_ok=True)
     
-    def download_video(self, url, noVid, copyDest):
-
-        # TODO: Implement download format selection. Issue-32
+    def download_video(self, url: str, noVid: bool, copyDest: Optional[str]) -> bool:
+        # copyDest: optional custom directory to copy downloaded files to
         try:
+            downloads_path = Path(self.output_dir)
+            # Track existing files to identify newly downloaded ones
+            files_before = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
+            
             ydl_opts = {
                 'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
                 'format': 'best[protocol!*=m3u8][height<=720]/best[protocol!*=m3u8]/best[height<=720]/best',
@@ -39,9 +45,17 @@ class YouTubeDownloader:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
 
-            print(f"Successfully downloaded video from: {url}") 
-            if (copyDest != None):
-                self._copy_to_dest(copyDest)
+            print(f"Successfully downloaded video from: {url}")
+            
+            # Do the coping of files to custom directory if specified
+            if copyDest:
+                files_after = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
+                new_files = files_after - files_before
+                
+                if new_files:
+                    self._copy_specific_files(copyDest, list(new_files))
+                else:
+                    print("Warning: No new files detected after download")
             return True
             
         except Exception as e:
@@ -49,7 +63,7 @@ class YouTubeDownloader:
             print("Trying fallback with simpler format selection...")
             return self._try_fallback_download(url, noVid, copyDest)
     
-    def get_video_info(self, url):
+    def get_video_info(self, url: str) -> Optional[Dict[str, Any]]:
         try:
             ydl_opts = {
                 'quiet': True,
@@ -79,8 +93,11 @@ class YouTubeDownloader:
             print(f"Error getting video info: {str(e)}")
             return None
     
-    def _try_fallback_download(self, url, noVid, copyDest):
+    def _try_fallback_download(self, url: str, noVid: bool, copyDest: Optional[str]) -> bool:
         try:
+            downloads_path = Path(self.output_dir)
+            files_before = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
+            
             ydl_opts = {
                 'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
                 'format': 'worst[protocol!=m3u8]/best[protocol!=m3u8]/worst',
@@ -104,8 +121,15 @@ class YouTubeDownloader:
                 ydl.download([url])
             
             print(f"Fallback download successful for: {url}")
-            if (copyDest !="none"):
-                self._copy_to_dest(copyDest)
+            
+            if copyDest:
+                files_after = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
+                new_files = files_after - files_before
+                
+                if new_files:
+                    self._copy_specific_files(copyDest, list(new_files))
+                else:
+                    print("Warning: No new files detected after fallback download")
             return True
             
         except Exception as e:
@@ -113,20 +137,59 @@ class YouTubeDownloader:
             print("Video may not be available or have restrictions.")
             return False
         
-    def _copy_to_dest(self, copyDest):
-
+    def _validate_path(self, path: str) -> Tuple[bool, str]:
+        """Validate that the destination path is safe and accessible."""
         try:
-            # Create directory structure for copyDest, begining at system root
-            p = Path(copyDest)
-            p.mkdir(parents = True, exist_ok = True)
-            print(f"Directory '{p}' created")
-            
-        
+            path_obj = Path(path).resolve()
+            # Ensure path is an absolute path
+            if not path_obj.is_absolute():
+                return False, "Path must be absolute"
+            # Create directory structure if it doesn't already exist
+            path_obj.mkdir(parents=True, exist_ok=True)
+            # Verify write permissions
+            if not os.access(path_obj.parent, os.W_OK):
+                return False, "No write permission to destination directory"
+            return True, str(path_obj)
         except Exception as e:
-            print(f"Copy Destination Path Invalid.")
-            print({str(e)})
-
-        # TODO: Implement code using shutil.copy2 for copying the downloaded file. Issue-33
+            return False, f"Invalid path: {str(e)}"
+    
+    def _copy_specific_files(self, copyDest: str, filenames: List[str]) -> None:
+        """Copy specified files from downloads directory to custom destination."""
+        if not copyDest or not filenames:
+            return
+            
+        is_valid, result = self._validate_path(copyDest)
+        if not is_valid:
+            print(f"Invalid destination path: {result}")
+            return
         
-                              
-                              
+        try:
+            dest_path = Path(result)
+            downloads_path = Path(self.output_dir)
+            
+            print(f"Copying {len(filenames)} file(s) to '{dest_path}'")
+            
+            copied_files = []
+            for filename in filenames:
+                source_file = downloads_path / filename
+                
+                if not source_file.exists():
+                    print(f"File {filename} not found in downloads directory")
+                    continue
+                    
+                try:
+                    dest_file_path = dest_path / filename
+                    shutil.copy2(source_file, dest_file_path)
+                    copied_files.append(filename)
+                    print(f"Copied: {filename} to {dest_file_path}")
+                except Exception as file_error:
+                    print(f"Failed to copy {filename}: {str(file_error)}")
+            
+            if copied_files:
+                print(f"Successfully copied {len(copied_files)} file(s) to {dest_path}")
+            else:
+                print("No files were copied")
+            
+        except Exception as e:
+            print(f"Copy failed: {str(e)}")
+            raise

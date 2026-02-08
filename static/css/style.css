@@ -126,3 +126,44 @@ button:disabled {
 .option-box select {
   text-align: center;
 }
+
+.option-box small {
+  margin-top: 4px;
+  color: #006cd8;
+  font-size: 12px;
+  text-align: center;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.toggle-label input[type="checkbox"] {
+  width: auto;
+}
+
+.custom-dir-input {
+  flex: auto;
+  width: 80%;
+  margin-top: 10px;
+  padding: 15px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  display: none;
+}
+
+.custom-dir-input label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.custom-dir-input input[type="text"] {
+  margin-bottom: 5px;
+}
+

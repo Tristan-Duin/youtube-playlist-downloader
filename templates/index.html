@@ -9,10 +9,9 @@
     <h1>YouTube Downloader</h1>
 
     <form id="form">
-        <!-- MP3/MP4/MP4_Playlist Selection -->
         <div class="format-row">
             <label class="radio-option">
-                <input type="radio" name="format" value="mp3" checked onchange="toggleOptions()">
+                <input type="radio" name="format" value="mp3" checked>
                 <span class="radio-text">
                 MP3<br>
                 <span class="radio-sub">(audio only)</span>
@@ -20,7 +19,7 @@
             </label>
 
             <label class="radio-option">
-                <input type="radio" name="format" value="mp4" onchange="toggleOptions()">
+                <input type="radio" name="format" value="mp4">
                 <span class="radio-text">
                 MP4<br>
                 <span class="radio-sub">(video)</span>
@@ -28,7 +27,7 @@
             </label>
 
             <label class="radio-option">
-                <input type="radio" name="format" value="mp4_playlist" onchange="toggleOptions()">
+                <input type="radio" name="format" value="mp4_playlist">
                 <span class="radio-text">
                 MP4<br>
                 <span class="radio-sub">(playlist)</span>
@@ -36,9 +35,8 @@
             </label>
         </div>
 
-        <!-- Resolution dropdown (MP4 + MP4 playlist only) -->
         <div id="resolution-box" class="option-box" style="display: none;">
-        <label for="resolution">Preferred Resolution</label><br>
+            <label for="resolution">Preferred Resolution</label>
             <select name="resolution" id="resolution">
                 <option value="1080">1080p</option>
                 <option value="720" selected>720p</option>
@@ -47,9 +45,8 @@
             </select>
         </div>
 
-        <!-- Bitrate dropdown (MP3 only) -->
-        <div id="bitrate-box" class="option-box" style="display: none;">
-        <label for="bitrate">Preferred Bitrate</label>
+        <div id="bitrate-box" class="option-box">
+            <label for="bitrate">Preferred Bitrate</label>
             <select name="bitrate" id="bitrate">
                 <option value="best" selected>Best available</option>
                 <option value="320">320 kbps</option>
@@ -61,6 +58,18 @@
             </select>
         </div>
 
+        <div class="option-box">
+            <label class="toggle-label">
+                <input type="checkbox" id="use-custom-dir">
+                Use custom output directory
+            </label>
+            
+            <div id="custom-dir-input" class="custom-dir-input">
+                <label for="custom-directory">Output Directory</label>
+                <input type="text" id="custom-directory" name="custom_directory" placeholder="Enter absolute path (Example: C:\Users\Tristan\Videos)">
+            </div>
+        </div>
+
         <input type="url" id="url-input" name="url" placeholder="YouTube URL" required>
         <button type="submit" id="download-btn">Download</button>
     </form>
@@ -69,26 +78,6 @@
     <div id="status">Ready</div>
 </div>
 
-<!-- Options Toggle Script -->
-<script>
-    function toggleOptions() {
-      const selected = document.querySelector('input[name="format"]:checked')?.value;
-
-      const resolutionBox = document.getElementById("resolution-box");
-      const bitrateBox = document.getElementById("bitrate-box");
-
-      const isMp3 = (selected === "mp3");
-      const isMp4 = (selected === "mp4" || selected === "mp4_playlist");
-
-      if (resolutionBox) resolutionBox.style.display = isMp4 ? "flex" : "none";
-      if (bitrateBox) bitrateBox.style.display = isMp3 ? "flex" : "none";
-    }
-
-    document.addEventListener("DOMContentLoaded", toggleOptions);
-</script>
-
-
 <script src="{{ url_for('static', filename='js/downloader.js') }}"></script>
 </body>
 </html>
-
