@@ -1,46 +1,23 @@
-import sys
 from src.youtube_downloader import YouTubeDownloader
 from src.config import setup_directories
+from typing import Annotated
+import typer
 
-def main():
+app = typer.Typer()
+
+@app.command()
+def main(url: Annotated[str, typer.Argument(help='\"https://www.youtube.com/watch?v=VIDEO_ID\"')],
+         noVid: Annotated[bool,typer.Option("--audio", "-a", help="Download MP3 Audio only.")] = False,
+         copyDest: Annotated[str, typer.Option("--copy", "-c", help="Copy download to specified folder.")] = None,
+         ):
+
     print("\nYouTube Downloader - College Project\n")
 
-    # Initialize Option variables to default values
-    copyDest = None
-    noVid = False
-    
-    # TODO: Replace rudimentary argument system with argument definitions using Typer library. Issue-34
-    i = 0
-    while i < len(sys.argv):
-        match sys.argv[i].casefold():
-            case '--copy' | '--c':
-                copyDest = str(sys.argv[(i+1)])
-            
-            case '--audio' | '--a':
-                noVid = True
-
-            case '--help' | '--h':
-           
-                print("USAGE: python cli.py [options] [videolink]")
-                print("\n    videolink:                   \"https://www.youtube.com/watch?v=VIDEO_ID\"")
-                print("\n    options:")
-                print("         --help  | --h           Display this help message.")      
-                print("         --audio | --a           Download audio (Mp3) only.")
-                print("         --copy  | --c  [path]   Copy download to specified folder path.\n")
-                sys.exit(1)
-        i=i+1
-
-    # Required Arg for URL should be at end of the array
-    url = sys.argv[(len(sys.argv)-1)]
-    # TODO: Refactor this error message to "'Usage: python cli.py --help' for additional information." Issue-34
-    if len(sys.argv) < 2:
-        print("Usage: python cli.py \"https://www.youtube.com/watch?v=VIDEO_ID\"")
-        sys.exit(1)
-    # TODO: Refactor this block into an "Https://" argument definition to ensure link is a valid youtube video link. Issue-34"
+    # Catch Invalid Video URL
     if not url.startswith(('https://www.youtube.com/', 'https://youtu.be/')):
         print("Error: Please provide a valid YouTube URL")
         sys.exit(1)
-    
+
     setup_directories()
     
     downloader = YouTubeDownloader()
@@ -67,4 +44,4 @@ def main():
         sys.exit(1)
 
 if __name__ == "__main__":
-    main()
+    app()
