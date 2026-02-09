@@ -66,7 +66,6 @@ class YouTubeDownloader:
             print("Trying fallback with simpler format selection...")
             return self._try_fallback_download(url, noVid, copyDest)
 
-    # NEW METHOD -- GUI bitrate/resolution for MP3/MP4)
     def download_media(self, url: str, selected_format: str, resolution: str, bitrate: str, copyDest: Optional[str]) -> bool:
         try:
             downloads_path = Path(self.output_dir)
@@ -223,7 +222,6 @@ class YouTubeDownloader:
             print("Video may not be available or have restrictions.")
             return False
 
-    # NEW FALLBACK for GUI media downloads
     def _try_fallback_download_media(self, url: str, selected_format: str, resolution: str, bitrate: str, copyDest: Optional[str]) -> bool:
         try:
             downloads_path = Path(self.output_dir)
