@@ -6,17 +6,26 @@ import typer
 app = typer.Typer()
 
 @app.command()
-def main(url: Annotated[str, typer.Argument(help='\"https://www.youtube.com/watch?v=VIDEO_ID\"')],
-         noVid: Annotated[bool,typer.Option("--audio", "-a", help="Download MP3 Audio only.")] = False,
-         copyDest: Annotated[str, typer.Option("--copy", "-c", help="Copy download to specified folder.")] = None,
-         ):
+def main(
+    url: Annotated[
+        str,
+        typer.Argument(help='\"https://www.youtube.com/watch?v=VIDEO_ID\"')
+    ],
+    audio_only: Annotated[
+        bool,
+        typer.Option("--audio", "-a", help="Download MP3 Audio only.")
+    ] = False,
+    output_dir: Annotated[
+        str | None,
+        typer.Option("--output-dir", "-o", help="Copy download to specified folder.")
+    ] = None,
+):
 
     print("\nYouTube Downloader - College Project\n")
 
     # Catch Invalid Video URL
     if not url.startswith(('https://www.youtube.com/', 'https://youtu.be/')):
-        print("Error: Please provide a valid YouTube URL")
-        sys.exit(1)
+        raise ValueError(f"Error: {url} is not a valid YouTube URL.")
 
     setup_directories()
     
@@ -35,13 +44,12 @@ def main(url: Annotated[str, typer.Argument(help='\"https://www.youtube.com/watc
         print()
     
     print("Starting download...")
-    success = downloader.download_video(url, noVid, copyDest)
+    success = downloader.download_video(url, audio_only, output_dir)
     
     if success:
         print("Download completed!")
     else:
-        print("Download failed.")
-        sys.exit(1)
+        raise Exception("Error: Download failed.")
 
 if __name__ == "__main__":
     app()
