@@ -6,6 +6,18 @@ from typing import Optional, Dict, Any, Tuple, List
 from .config import DOWNLOADS_DIR, DEFAULT_FORMAT
 
 class YouTubeDownloader:
+    # Common HTTP headers used across requests
+    _COMMON_HEADERS = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-us,en;q=0.5',
+        'Sec-Fetch-Mode': 'navigate',
+    }
+
+    _FALLBACK_HEADERS = {
+        'User-Agent': 'com.google.android.youtube/19.02.39 (Linux; U; Android 11) gzip'
+    }
+    
     def __init__(self) -> None:
         self.output_dir = DOWNLOADS_DIR
         self.output_dir.mkdir(exist_ok=True)
@@ -24,12 +36,7 @@ class YouTubeDownloader:
                 'fragment_retries': 10,
                 'socket_timeout': 30,
                 'extractor_retries': 10,
-                'http_headers': {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                    'Accept-Language': 'en-us,en;q=0.5',
-                    'Sec-Fetch-Mode': 'navigate',
-                },
+                'http_headers': self._COMMON_HEADERS,
                 'extractor_args': {
                     'youtube': {
                         'player_client': ['android', 'web'],
@@ -50,11 +57,9 @@ class YouTubeDownloader:
 
             print(f"Successfully downloaded video from: {url}")
 
-            # Do the coping of files to custom directory if specified
             if copyDest:
                 files_after = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
                 new_files = files_after - files_before
-
                 if new_files:
                     self._copy_specific_files(copyDest, list(new_files))
                 else:
@@ -81,7 +86,6 @@ class YouTubeDownloader:
             if copyDest:
                 files_after = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
                 new_files = files_after - files_before
-
                 if new_files:
                     self._copy_specific_files(copyDest, list(new_files))
                 else:
@@ -100,12 +104,7 @@ class YouTubeDownloader:
             'fragment_retries': 10,
             'socket_timeout': 30,
             'extractor_retries': 10,
-            'http_headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language': 'en-us,en;q=0.5',
-                'Sec-Fetch-Mode': 'navigate',
-            },
+            'http_headers': self._COMMON_HEADERS,
             'extractor_args': {
                 'youtube': {
                     'player_client': ['android', 'web'],
@@ -152,11 +151,7 @@ class YouTubeDownloader:
                 'quiet': True,
                 'retries': 5,
                 'socket_timeout': 30,
-                'http_headers': {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                    'Accept-Language': 'en-us,en;q=0.5',
-                },
+                'http_headers': self._COMMON_HEADERS,
                 'extractor_args': {
                     'youtube': {
                         'player_client': ['android', 'web'],
@@ -193,9 +188,7 @@ class YouTubeDownloader:
                         'player_client': ['android'],
                     }
                 },
-                'http_headers': {
-                    'User-Agent': 'com.google.android.youtube/19.02.39 (Linux; U; Android 11) gzip'
-                },
+                'http_headers': self._FALLBACK_HEADERS,
                 'sleep_interval': 2,
                 'max_sleep_interval': 10,
                 'ignoreerrors': True,
@@ -210,7 +203,6 @@ class YouTubeDownloader:
             if copyDest:
                 files_after = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
                 new_files = files_after - files_before
-
                 if new_files:
                     self._copy_specific_files(copyDest, list(new_files))
                 else:
@@ -237,9 +229,7 @@ class YouTubeDownloader:
                         'player_client': ['android'],
                     }
                 },
-                'http_headers': {
-                    'User-Agent': 'com.google.android.youtube/19.02.39 (Linux; U; Android 11) gzip'
-                },
+                'http_headers': self._FALLBACK_HEADERS,
                 'sleep_interval': 2,
                 'max_sleep_interval': 10,
                 'ignoreerrors': True,
@@ -269,7 +259,6 @@ class YouTubeDownloader:
             if copyDest:
                 files_after = set(f.name for f in downloads_path.iterdir() if f.is_file()) if downloads_path.exists() else set()
                 new_files = files_after - files_before
-
                 if new_files:
                     self._copy_specific_files(copyDest, list(new_files))
                 else:
