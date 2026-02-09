@@ -54,7 +54,7 @@ def test_flask_endpoint_with_custom_directory():
     assert data['success'] == 'Download started'
     
     args = mock_thread.call_args[1]['args']
-    assert args[1] == '/custom/path'
+    assert args[4] == '/custom/path'
 
 
 def test_flask_endpoint_without_custom_directory():
@@ -69,7 +69,7 @@ def test_flask_endpoint_without_custom_directory():
     assert response.status_code == 200
     
     args = mock_thread.call_args[1]['args']
-    assert args[1] is None
+    assert args[4] is None
 
 
 if __name__ == '__main__':
