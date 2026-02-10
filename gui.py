@@ -6,7 +6,7 @@ import subprocess
 
 from src.youtube_downloader import YouTubeDownloader
 from src.config import setup_directories
-History_file = 'download_history.txt'
+History_file = 'downloads/download_history.txt'
 app = Flask(__name__)
 
 setup_directories()
