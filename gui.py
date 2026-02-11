@@ -110,12 +110,12 @@ def download_worker(url: str, selected_format: str, resolution: str, bitrate: st
 
         add_message("Starting download...")
 
-        success = downloader.download_media(
+        success = downloader.download(
             url=url,
-            selected_format=selected_format,
+            format=selected_format,
             resolution=resolution,
             bitrate=bitrate,
-            copyDest=custom_directory
+            output_dir=custom_directory
         )
 
         if success:
