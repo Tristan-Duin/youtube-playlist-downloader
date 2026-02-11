@@ -50,31 +50,31 @@ def test_get_video_info_failure(mock_ytdl_class, downloader, capsys):
 
 
 @patch('src.youtube_downloader.yt_dlp.YoutubeDL')
-def test_download_video_success(mock_ytdl_class, downloader, capsys):
+def test_download_success(mock_ytdl_class, downloader, capsys):
     mock_ytdl = Mock()
     mock_ytdl.download.return_value = None  # Pretty sure if no exception is thrown that means success
     mock_ytdl_class.return_value.__enter__.return_value = mock_ytdl
     
-    result = downloader.download_video('https://www.youtube.com/watch?v=test', False, None)
+    result = downloader.download('https://www.youtube.com/watch?v=test', format='mp4')
     
     assert result is True
     mock_ytdl.download.assert_called_once_with(['https://www.youtube.com/watch?v=test'])
     captured = capsys.readouterr()
-    assert "Successfully downloaded video from: https://www.youtube.com/watch?v=test" in captured.out
+    assert "Successfully downloaded MP4 from: https://www.youtube.com/watch?v=test" in captured.out
 
 
 @patch('src.youtube_downloader.yt_dlp.YoutubeDL')
-@patch.object(YouTubeDownloader, '_try_fallback_download')
-def test_download_video_with_fallback(mock_fallback, mock_ytdl_class, downloader, capsys):
+@patch.object(YouTubeDownloader, '_try_fallback')
+def test_download_with_fallback(mock_fallback, mock_ytdl_class, downloader, capsys):
     mock_ytdl = Mock()
     mock_ytdl.download.side_effect = Exception("Primary download error")
     mock_ytdl_class.return_value.__enter__.return_value = mock_ytdl
     
     mock_fallback.return_value = True
     
-    result = downloader.download_video('https://www.youtube.com/watch?v=test', False, None)
+    result = downloader.download('https://www.youtube.com/watch?v=test', format='mp4')
     
     assert result is True
-    mock_fallback.assert_called_once_with('https://www.youtube.com/watch?v=test', False, None)
+    mock_fallback.assert_called_once_with('https://www.youtube.com/watch?v=test', 'mp4', '720', 'best', None)
     captured = capsys.readouterr()
     assert "Primary download failed" in captured.out
