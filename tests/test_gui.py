@@ -111,7 +111,7 @@ def test_status_route():
 def test_download_worker_success(mock_downloader):
     """Test download worker."""
     mock_downloader.get_video_info.return_value = {'title': 'Test', 'uploader': 'Test', 'duration': 60}
-    mock_downloader.download_media.return_value = True
+    mock_downloader.download.return_value = True
     
     gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None}
     gui.download_worker('https://www.youtube.com/watch?v=test', 'mp3', '720', 'best', None)
@@ -124,7 +124,7 @@ def test_download_worker_success(mock_downloader):
 def test_download_worker_failure(mock_downloader):
     """Test download worker failure."""
     mock_downloader.get_video_info.return_value = None
-    mock_downloader.download_media.return_value = False
+    mock_downloader.download.return_value = False
     
     gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None}
     gui.download_worker('https://www.youtube.com/watch?v=test', 'mp3', '720', 'best', None)
@@ -200,7 +200,7 @@ def test_gui_invalid_bitrate():
 def test_download_worker_with_custom_dir(mock_downloader):
     """Test download worker with custom directory."""
     mock_downloader.get_video_info.return_value = None
-    mock_downloader.download_media.return_value = True
+    mock_downloader.download.return_value = True
     
     gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None}
     gui.download_worker('https://www.youtube.com/watch?v=test', 'mp3', '720', 'best', '/custom')

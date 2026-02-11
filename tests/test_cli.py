@@ -65,13 +65,13 @@ def test_main_with_audio_only(mock_downloader_class, mock_setup, mock_video_info
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
     mock_downloader.get_video_info.return_value = mock_video_info
-    mock_downloader.download_video.return_value = True
+    mock_downloader.download.return_value = True
     
     url = 'https://www.youtube.com/watch?v=test'
 
     result = runner.invoke(cli.app, [url, '--audio'])
 
-    mock_downloader.download_video.assert_called_once_with(url, True, None)
+    mock_downloader.download.assert_called_once_with(url, format='mp3', output_dir=None)
     assert result.exit_code == 0
     assert "Download completed!" in result.stdout
 
@@ -82,14 +82,14 @@ def test_main_with_output_dir(mock_downloader_class, mock_setup, mock_video_info
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
     mock_downloader.get_video_info.return_value = mock_video_info
-    mock_downloader.download_video.return_value = True
+    mock_downloader.download.return_value = True
     
     url = 'https://www.youtube.com/watch?v=test'
     output_dir = '/custom/path'
 
     result = runner.invoke(cli.app, [url, '--output-dir', output_dir])
 
-    mock_downloader.download_video.assert_called_once_with(url, False, output_dir)
+    mock_downloader.download.assert_called_once_with(url, format='mp4', output_dir=output_dir)
     assert result.exit_code == 0
     assert "Download completed!" in result.stdout
 
@@ -100,14 +100,14 @@ def test_main_with_both_options(mock_downloader_class, mock_setup, mock_video_in
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
     mock_downloader.get_video_info.return_value = mock_video_info
-    mock_downloader.download_video.return_value = True
+    mock_downloader.download.return_value = True
     
     url = 'https://www.youtube.com/watch?v=test'
     output_dir = '/custom/path'
 
     result = runner.invoke(cli.app, [url, '-a', '-o', output_dir])
 
-    mock_downloader.download_video.assert_called_once_with(url, True, output_dir)
+    mock_downloader.download.assert_called_once_with(url, format='mp3', output_dir=output_dir)
     assert result.exit_code == 0
     assert "Download completed!" in result.stdout
 
