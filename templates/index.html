@@ -93,21 +93,6 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/downloader.js') }}"></script>
-<script>
-document.getElementById("history-btn").addEventListener("click", () => {
-    fetch("/history")
-        .then(response => response.json())
-        .then(data => {
-            const box = document.getElementById("history-box")
-            if (data.history.length === 0) {
-                box.textContent = "No downloads yet"
-            } else {
-                box.textContent = data.history.join("\n")
-            }
-            box.style.display = "block"
-        })
-})
-</script>
 </body>
 </html>
 
