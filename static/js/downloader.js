@@ -168,3 +168,41 @@ const startPolling = () => {
     }, 1000);
 };
 
+document.getElementById("history-btn").addEventListener("click", () => {
+    fetch("/history")
+        .then(response => response.json())
+        .then(data => {
+            const box = document.getElementById("history-box")
+            if (data.history.length === 0) {
+                box.textContent = "No downloads yet"
+            } else {
+                let tableHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                data.history.forEach(entry => {
+                    tableHTML += `
+                        <tr>
+                            <td>${entry}</td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+                
+                box.innerHTML = tableHTML;
+            }
+            
+            box.style.display = "block";
+        });
+});
+

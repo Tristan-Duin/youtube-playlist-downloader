@@ -3,15 +3,12 @@ import threading
 from typing import Optional
 import shutil
 import subprocess
-
 from src.youtube_downloader import YouTubeDownloader
-from src.config import setup_directories
-
+from src.config import setup_directories, HISTORY_FILE
 app = Flask(__name__)
 
 setup_directories()
 downloader = YouTubeDownloader()
-
 download_status = {
     'in_progress': False,
     'messages': [],
@@ -122,6 +119,7 @@ def download_worker(url: str, selected_format: str, resolution: str, bitrate: st
                 add_message(f"Download completed and copied to: {custom_directory}")
             else:
                 add_message("Download completed!")
+            write_history(info['title'])
         else:
             add_message("Download failed.")
 
@@ -130,7 +128,22 @@ def download_worker(url: str, selected_format: str, resolution: str, bitrate: st
 
     finally:
         download_status['in_progress'] = False
+def write_history(title: str) -> None:
+    try:
+        with open(HISTORY_FILE, 'a', encoding='utf-8') as f:
+            f.write(title + '\n')   
+    except Exception as e:
+        print(f"Error writing to history file: {e}")    
 
+def read_history() -> list[str]:
+    try:
+        with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
+            return [line for line in f if line.strip()]
+    except FileNotFoundError:
+        return []
+@app.route('/history')
+def history():
+    return jsonify({'history': read_history()})
 def main() -> None:
     """Entry point for the GUI application."""
     app.run(debug=False, host='0.0.0.0', port=5000)
