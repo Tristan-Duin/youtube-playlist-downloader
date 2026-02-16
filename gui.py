@@ -3,15 +3,13 @@ import threading
 from typing import Optional
 import shutil
 import subprocess
-
 from src.youtube_downloader import YouTubeDownloader
 from src.config import setup_directories
-
+from pathlib import Path
 app = Flask(__name__)
 
 setup_directories()
 downloader = YouTubeDownloader()
-
 download_status = {
     'in_progress': False,
     'messages': [],
@@ -129,8 +127,27 @@ def download_worker(url: str, selected_format: str, resolution: str, bitrate: st
         add_message(f"Error: {str(e)}")
 
     finally:
-        download_status['in_progress'] = False
+        download_status['in_progress'] = False  
 
+def get_download_history():
+    downloads_path = Path("downloads")
+    if not downloads_path.exists():
+        return []
+    
+    files = []
+    for file_path in downloads_path.iterdir():
+        if file_path.is_file() and file_path.suffix.lower() in ['.mp4', '.mp3']:
+            files.append({
+                'filename': file_path.name,
+                'format': file_path.suffix[1:].upper(),
+                'size': file_path.stat().st_size,
+                'downloaded': file_path.stat().st_mtime
+            })
+    print(files)
+    return sorted(files, key=lambda x: x['downloaded'], reverse=True)
+@app.route('/history')
+def history():
+    return jsonify({'history': get_download_history()})
 def main() -> None:
     """Entry point for the GUI application."""
     app.run(debug=False, host='0.0.0.0', port=5000)
