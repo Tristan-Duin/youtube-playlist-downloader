@@ -13,7 +13,7 @@ def test_main_no_arguments():
     result = runner.invoke(cli.app, [])
 
     assert result.exit_code != 0
-    assert "Missing argument" in result.stdout
+    assert "Missing argument" in result.stderr
 
 
 def test_main_invalid_url():
