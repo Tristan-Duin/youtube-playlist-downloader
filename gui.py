@@ -4,7 +4,8 @@ from typing import Optional
 import shutil
 import subprocess
 from src.youtube_downloader import YouTubeDownloader
-from src.config import setup_directories, HISTORY_FILE
+from src.config import setup_directories
+from pathlib import Path
 app = Flask(__name__)
 
 setup_directories()
@@ -120,7 +121,6 @@ def download_worker(url: str, selected_format: str, resolution: str, bitrate: st
                 add_message(f"Download completed and copied to: {custom_directory}")
             else:
                 add_message("Download completed!")
-            write_history(info['title'])
         else:
             add_message("Download failed.")
 
@@ -128,23 +128,27 @@ def download_worker(url: str, selected_format: str, resolution: str, bitrate: st
         add_message(f"Error: {str(e)}")
 
     finally:
-        download_status['in_progress'] = False
-def write_history(title: str) -> None:
-    try:
-        with open(HISTORY_FILE, 'a', encoding='utf-8') as f:
-            f.write(title + '\n')   
-    except Exception as e:
-        print(f"Error writing to history file: {e}")    
+        download_status['in_progress'] = False  
 
-def read_history() -> list[str]:
-    try:
-        with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
-            return [line for line in f if line.strip()]
-    except FileNotFoundError:
+def get_download_history():
+    downloads_path = Path("downloads")
+    if not downloads_path.exists():
         return []
+    
+    files = []
+    for file_path in downloads_path.iterdir():
+        if file_path.is_file() and file_path.suffix.lower() in ['.mp4', '.mp3']:
+            files.append({
+                'filename': file_path.name,
+                'format': file_path.suffix[1:].upper(),
+                'size': file_path.stat().st_size,
+                'downloaded': file_path.stat().st_mtime
+            })
+    print(files)
+    return sorted(files, key=lambda x: x['downloaded'], reverse=True)
 @app.route('/history')
 def history():
-    return jsonify({'history': read_history()})
+    return jsonify({'history': get_download_history()})
 def main() -> None:
     """Entry point for the GUI application."""
     app.run(debug=False, host='0.0.0.0', port=5000)

@@ -181,6 +181,8 @@ document.getElementById("history-btn").addEventListener("click", () => {
                         <thead>
                             <tr>
                                 <th>Title</th>
+                                <th>Format</th>
+                                <th>Size (Megabytes)</th> 
                             </tr>
                         </thead>
                         <tbody>
@@ -189,7 +191,10 @@ document.getElementById("history-btn").addEventListener("click", () => {
                 data.history.forEach(entry => {
                     tableHTML += `
                         <tr>
-                            <td>${entry}</td>
+                            <td>${entry.filename}</td>
+                            <td>${entry.format}</td>
+                            <td>${(entry.size / (1024 * 1024)).toFixed(2)}</td>
+                            <td>${new Date(entry.downloaded * 1000).toLocaleString()}</td>  
                         </tr>
                     `;
                 });
