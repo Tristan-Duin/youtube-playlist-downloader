@@ -23,9 +23,10 @@ def test_main_invalid_url():
     assert "valid YouTube URL." in str(result.exception)
 
 
+@patch('cli.verify_ffmpeg')
 @patch('cli.setup_directories')
 @patch('cli.YouTubeDownloader')
-def test_main_successful_download(mock_downloader_class, mock_setup, mock_video_info):
+def test_main_successful_download(mock_downloader_class, mock_setup, mock_ffmpeg, mock_video_info):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
     mock_downloader.is_playlist_url.return_value = False
@@ -39,15 +40,16 @@ def test_main_successful_download(mock_downloader_class, mock_setup, mock_video_
     mock_setup.assert_called_once()
     mock_downloader.is_playlist_url.assert_called_once_with(url)
     mock_downloader.get_video_info.assert_called_once_with(url)
-    mock_downloader.download.assert_called_once_with(url, format='mp4', output_dir=None)
+    mock_downloader.download.assert_called_once_with(url, format='mp4', resolution=None, bitrate=None, output_dir=None)
     
     assert result.exit_code == 0
     assert "Download completed!" in result.stdout
 
 
+@patch('cli.verify_ffmpeg')
 @patch('cli.setup_directories')
 @patch('cli.YouTubeDownloader')
-def test_main_download_failure(mock_downloader_class, mock_setup):
+def test_main_download_failure(mock_downloader_class, mock_setup, mock_ffmpeg):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
     mock_downloader.is_playlist_url.return_value = False
@@ -62,9 +64,10 @@ def test_main_download_failure(mock_downloader_class, mock_setup):
     assert "Error: Download failed." in str(result.exception)
 
 
+@patch('cli.verify_ffmpeg')
 @patch('cli.setup_directories')
 @patch('cli.YouTubeDownloader')
-def test_main_with_audio_only(mock_downloader_class, mock_setup, mock_video_info):
+def test_main_with_audio_only(mock_downloader_class, mock_setup, mock_ffmpeg, mock_video_info):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
     mock_downloader.is_playlist_url.return_value = False
@@ -73,16 +76,17 @@ def test_main_with_audio_only(mock_downloader_class, mock_setup, mock_video_info
     
     url = 'https://www.youtube.com/watch?v=test'
 
-    result = runner.invoke(cli.app, [url, '--audio'])
+    result = runner.invoke(cli.app, [url, '--audio', 'true'])
 
-    mock_downloader.download.assert_called_once_with(url, format='mp3', output_dir=None)
+    mock_downloader.download.assert_called_once_with(url, format='mp3', resolution=None, bitrate='true', output_dir=None)
     assert result.exit_code == 0
     assert "Download completed!" in result.stdout
 
 
+@patch('cli.verify_ffmpeg')
 @patch('cli.setup_directories')
 @patch('cli.YouTubeDownloader')
-def test_main_with_output_dir(mock_downloader_class, mock_setup, mock_video_info):
+def test_main_with_output_dir(mock_downloader_class, mock_setup, mock_ffmpeg, mock_video_info):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
     mock_downloader.is_playlist_url.return_value = False
@@ -94,14 +98,15 @@ def test_main_with_output_dir(mock_downloader_class, mock_setup, mock_video_info
 
     result = runner.invoke(cli.app, [url, '--output-dir', output_dir])
 
-    mock_downloader.download.assert_called_once_with(url, format='mp4', output_dir=output_dir)
+    mock_downloader.download.assert_called_once_with(url, format='mp4', resolution=None, bitrate=None, output_dir=output_dir)
     assert result.exit_code == 0
     assert "Download completed!" in result.stdout
 
 
+@patch('cli.verify_ffmpeg')
 @patch('cli.setup_directories')
 @patch('cli.YouTubeDownloader')
-def test_main_with_both_options(mock_downloader_class, mock_setup, mock_video_info):
+def test_main_with_both_options(mock_downloader_class, mock_setup, mock_ffmpeg, mock_video_info):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
     mock_downloader.is_playlist_url.return_value = False
@@ -111,16 +116,17 @@ def test_main_with_both_options(mock_downloader_class, mock_setup, mock_video_in
     url = 'https://www.youtube.com/watch?v=test'
     output_dir = '/custom/path'
 
-    result = runner.invoke(cli.app, [url, '-a', '-o', output_dir])
+    result = runner.invoke(cli.app, [url, '-a', 'true', '-o', output_dir])
 
-    mock_downloader.download.assert_called_once_with(url, format='mp3', output_dir=output_dir)
+    mock_downloader.download.assert_called_once_with(url, format='mp3', resolution=None, bitrate='true', output_dir=output_dir)
     assert result.exit_code == 0
     assert "Download completed!" in result.stdout
 
 
+@patch('cli.verify_ffmpeg')
 @patch('cli.setup_directories')
 @patch('cli.YouTubeDownloader')
-def test_main_with_playlist_url(mock_downloader_class, mock_setup):
+def test_main_with_playlist_url(mock_downloader_class, mock_setup, mock_ffmpeg):
     """Test CLI with playlist URL."""
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader

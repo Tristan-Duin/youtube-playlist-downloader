@@ -15,7 +15,7 @@ def main(
     ],
     audio_only: Annotated[
         str,
-        typer.Option("--audio", "-a", help='Download MP3 Audio only.')
+        typer.Option("--audio", "-a", help='Download MP3 Audio only. The value provided is the bitrate desired.')
     ] = None,
     resolution: Annotated[
         str,
@@ -61,7 +61,7 @@ def main(
         
         print("Starting playlist download...")
         format = 'mp3' if audio_only else 'mp4'
-        success = downloader.download(url, format=format, resolution=resolution, output_dir=output_dir, progress_callback=progress_callback)
+        success = downloader.download(url, format=format, resolution=resolution, bitrate=audio_only, output_dir=output_dir, progress_callback=progress_callback)
     else:
         print(f"Getting video information...")
         info = downloader.get_video_info(url)
