@@ -65,6 +65,14 @@ docker-compose down
 - Node.js (for yt-dlp JavaScript execution)
 - FFmpeg (optional, for video processing)
 
+
+## Disclaimer & Legal Information
+
+This project is provided for educational purposes only.  It demonstrates the use of tools and techniques related to downloading content from YouTube.  We strongly encourage responsible usage and a thorough understanding of copyright law and YouTube's Terms of Service (ToS).
+
+Users are solely responsible for ensuring their downloads comply with all applicable laws, regulations, and YouTube’s ToS. Downloading copyrighted material without permission is illegal and violates YouTube’s policies. We do not endorse or encourage any activity that infringes on intellectual property rights.  Please respect the creators' rights and use this tool ethically.
+
+
 ## Contributing
 
 Please read through [CONTRIBUTING.md](CONTRIBUTING.md).
