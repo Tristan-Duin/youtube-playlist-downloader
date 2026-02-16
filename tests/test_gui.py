@@ -80,11 +80,13 @@ def test_download_invalid_url():
 
 
 def test_download_playlist_url():
-    """Test download with playlist URL."""
+    """Test download with playlist URL - should now be accepted."""
     gui.download_status['in_progress'] = False
     with gui.app.test_client() as client:
-        response = client.post('/download', data={'url': 'https://www.youtube.com/playlist?list=test'})
-        assert response.status_code == 400
+        with patch('gui.threading.Thread') as mock_thread:
+            response = client.post('/download', data={'url': 'https://www.youtube.com/playlist?list=test'})
+            assert response.status_code == 200  # Should be accepted now
+            mock_thread.assert_called_once()
 
 
 def test_download_success():
@@ -110,10 +112,11 @@ def test_status_route():
 @patch('gui.downloader')
 def test_download_worker_success(mock_downloader):
     """Test download worker."""
+    mock_downloader.is_playlist_url.return_value = False
     mock_downloader.get_video_info.return_value = {'title': 'Test', 'uploader': 'Test', 'duration': 60}
     mock_downloader.download.return_value = True
     
-    gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None}
+    gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None, 'is_playlist': False, 'playlist_info': None, 'current_video_index': 0, 'total_videos': 0}
     gui.download_worker('https://www.youtube.com/watch?v=test', 'mp3', '720', 'best', None)
     
     assert not gui.download_status['in_progress']
@@ -123,10 +126,11 @@ def test_download_worker_success(mock_downloader):
 @patch('gui.downloader')
 def test_download_worker_failure(mock_downloader):
     """Test download worker failure."""
+    mock_downloader.is_playlist_url.return_value = False
     mock_downloader.get_video_info.return_value = None
     mock_downloader.download.return_value = False
     
-    gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None}
+    gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None, 'is_playlist': False, 'playlist_info': None, 'current_video_index': 0, 'total_videos': 0}
     gui.download_worker('https://www.youtube.com/watch?v=test', 'mp3', '720', 'best', None)
     
     assert not gui.download_status['in_progress']
@@ -136,9 +140,10 @@ def test_download_worker_failure(mock_downloader):
 @patch('gui.downloader')
 def test_download_worker_exception(mock_downloader):
     """Test download worker with exception."""
+    mock_downloader.is_playlist_url.return_value = False
     mock_downloader.get_video_info.side_effect = Exception("Test error")
     
-    gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None}
+    gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None, 'is_playlist': False, 'playlist_info': None, 'current_video_index': 0, 'total_videos': 0}
     gui.download_worker('https://www.youtube.com/watch?v=test', 'mp3', '720', 'best', None)
     
     assert not gui.download_status['in_progress']
@@ -199,11 +204,34 @@ def test_gui_invalid_bitrate():
 @patch('gui.downloader')
 def test_download_worker_with_custom_dir(mock_downloader):
     """Test download worker with custom directory."""
+    mock_downloader.is_playlist_url.return_value = False
     mock_downloader.get_video_info.return_value = None
     mock_downloader.download.return_value = True
     
-    gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None}
+    gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None, 'is_playlist': False, 'playlist_info': None, 'current_video_index': 0, 'total_videos': 0}
     gui.download_worker('https://www.youtube.com/watch?v=test', 'mp3', '720', 'best', '/custom')
     
     assert not gui.download_status['in_progress']
     assert 'copied to: /custom' in ' '.join(gui.download_status['messages'])
+
+
+@patch('gui.downloader')
+def test_download_worker_with_playlist(mock_downloader):
+    """Test download worker with playlist URL."""
+    mock_downloader.is_playlist_url.return_value = True
+    mock_playlist_info = {
+        'title': 'Test Playlist',
+        'uploader': 'Test Channel', 
+        'video_count': 3
+    }
+    mock_downloader.get_playlist_info.return_value = mock_playlist_info
+    mock_downloader.download.return_value = True
+    
+    gui.download_status = {'in_progress': True, 'messages': [], 'current_video': None, 'is_playlist': False, 'playlist_info': None, 'current_video_index': 0, 'total_videos': 0}
+    gui.download_worker('https://www.youtube.com/playlist?list=PLtest123', 'mp3', '720', 'best', None)
+    
+    assert not gui.download_status['in_progress']
+    assert gui.download_status['is_playlist'] is True
+    assert gui.download_status['playlist_info'] == mock_playlist_info
+    assert 'Starting playlist download...' in gui.download_status['messages']
+    assert 'Playlist download completed!' in gui.download_status['messages']
