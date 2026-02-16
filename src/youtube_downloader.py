@@ -19,11 +19,16 @@ class YouTubeDownloader:
         'User-Agent': 'com.google.android.youtube/19.02.39 (Linux; U; Android 11) gzip'
     }
     
-    def __init__(self) -> None:
+    def __init__(
+        self
+        ) -> None:
         self.output_dir = DOWNLOADS_DIR
         self.output_dir.mkdir(exist_ok=True)
     
-    def is_playlist_url(self, url: str) -> bool:
+    def is_playlist_url(
+        self, 
+        url: str
+        ) -> bool:
         """Check if the given URL is a YouTube playlist URL."""
         playlist_patterns = [
             r'[?&]list=',
@@ -32,7 +37,10 @@ class YouTubeDownloader:
         ]
         return any(re.search(pattern, url, re.IGNORECASE) for pattern in playlist_patterns)
     
-    def get_playlist_info(self, url: str) -> Optional[Dict[str, Any]]:
+    def get_playlist_info(
+        self, 
+        url: str
+        ) -> Optional[Dict[str, Any]]:
         """Extract playlist information without downloading."""
         try:
             ydl_opts = {
@@ -72,8 +80,14 @@ class YouTubeDownloader:
             print(f"Error getting playlist info: {str(e)}")
             return None
     
-    def download_playlist(self, url: str, format: str = 'mp4', resolution: str = '720', bitrate: str = 'best', 
-                         output_dir: Optional[str] = None, progress_callback: Optional[Callable[[int, int, str], None]] = None) -> bool:
+    def download_playlist(
+        self, url: str, 
+        format: str = 'mp4', 
+        resolution: str = '720', 
+        bitrate: str = 'best', 
+        output_dir: Optional[str] = None, 
+        progress_callback: Optional[Callable[[int, int, str], None]] = None
+        ) -> bool:
         """Download an entire YouTube playlist with progress tracking.
         
         Args:
@@ -156,8 +170,14 @@ class YouTubeDownloader:
             print("Trying fallback approach...")
             return self._try_playlist_fallback(url, format, resolution, bitrate, output_dir, progress_callback)
     
-    def _try_playlist_fallback(self, url: str, format: str, resolution: str, bitrate: str, 
-                              output_dir: Optional[str], progress_callback: Optional[Callable[[int, int, str], None]]) -> bool:
+    def _try_playlist_fallback(
+        self, url: str, 
+        format: str, 
+        resolution: str, 
+        bitrate: str, 
+        output_dir: Optional[str], 
+        progress_callback: Optional[Callable[[int, int, str], None]]
+        ) -> bool:
         """Try a fallback playlist download with simplified options."""
         try:
             downloads_path = Path(self.output_dir)
@@ -208,8 +228,14 @@ class YouTubeDownloader:
             print(f"Fallback playlist download also failed: {str(e)}")
             return False
 
-    def download(self, url: str, format: str = 'mp4', resolution: str = '720', bitrate: str = 'best', 
-                output_dir: Optional[str] = None, progress_callback: Optional[Callable[[int, int, str], None]] = None) -> bool:
+    def download(
+        self, url: str, 
+        format: str = 'mp4', 
+        resolution: str = '720', 
+        bitrate: str = 'best', 
+        output_dir: Optional[str] = None, 
+        progress_callback: Optional[Callable[[int, int, str], None]] = None
+        ) -> bool:
         """Unified download method for both video and audio downloads.
         Automatically detects and handles playlist URLs.
             
@@ -245,7 +271,10 @@ class YouTubeDownloader:
             return self._try_fallback(url, format, resolution, bitrate, output_dir)
     
 
-    def _get_download_options(self, format: str, resolution: str, bitrate: str) -> Dict[str, Any]:
+    def _get_download_options(
+        self, format: str, 
+        resolution: str, bitrate: str
+        ) -> Dict[str, Any]:
         """Get yt-dlp download options based on format and quality settings."""
         base_opts: Dict[str, Any] = {
             'outtmpl': str(self.output_dir / '%(title)s.%(ext)s'),
@@ -294,7 +323,10 @@ class YouTubeDownloader:
 
         return base_opts
 
-    def get_video_info(self, url: str) -> Optional[Dict[str, Any]]:
+    def get_video_info(
+        self, 
+        url: str
+        ) -> Optional[Dict[str, Any]]:
         try:
             ydl_opts = {
                 'quiet': True,
@@ -321,7 +353,14 @@ class YouTubeDownloader:
             print(f"Error getting video info: {str(e)}")
             return None
 
-    def _try_fallback(self, url: str, format: str, resolution: str, bitrate: str, output_dir: Optional[str]) -> bool:
+    def _try_fallback(
+        self, 
+        url: str, 
+        format: str, 
+        resolution: str, 
+        bitrate: str, 
+        output_dir: Optional[str]
+        ) -> bool:
         """Try a fallback download with simplified options when the primary download fails."""
         try:
             downloads_path = Path(self.output_dir)
@@ -379,7 +418,10 @@ class YouTubeDownloader:
             print("Media may not be available or have restrictions.")
             return False
 
-    def _validate_path(self, path: str) -> Tuple[bool, str]:
+    def _validate_path(
+        self, 
+        path: str
+        ) -> Tuple[bool, str]:
         """Validate that the destination path is safe and accessible."""
         try:
             path_obj = Path(path).resolve()
@@ -395,7 +437,11 @@ class YouTubeDownloader:
         except Exception as e:
             return False, f"Invalid path: {str(e)}"
 
-    def _copy_specific_files(self, copyDest: str, filenames: List[str]) -> None:
+    def _copy_specific_files(
+        self, 
+        copyDest: str, 
+        filenames: List[str]
+        ) -> None:
         """Copy specified files from downloads directory to custom destination."""
         if not copyDest or not filenames:
             return

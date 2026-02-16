@@ -90,10 +90,18 @@ def download():
 def status():
     return jsonify(download_status)
 
-def add_message(message: str) -> None:
+def add_message(
+    message: str
+    ) -> None:
     download_status['messages'].append(message)
 
-def download_worker(url: str, selected_format: str, resolution: str, bitrate: str, custom_directory: Optional[str] = None) -> None:
+def download_worker(
+    url: str, 
+    selected_format: str, 
+    resolution: str, 
+    bitrate: str, 
+    custom_directory: Optional[str] = None
+    ) -> None:
     try:
         # Check if this is a playlist
         if downloader.is_playlist_url(url):
