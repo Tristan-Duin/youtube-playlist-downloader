@@ -25,15 +25,20 @@ def main(
         str | None,
         typer.Option("--output-dir", "-o", help='Copy download to specified folder.')
     ] = None,
+    validate_install: Annotated[
+        bool | None,
+        typer.Option("--ffmpeg", help='Verify FFmpeg is installed.')
+    ] = None
+
 ):
 
     print("\nYouTube Downloader - College Project\n")
 
+    verify_ffmpeg(validate_install)
+    
     # Catch Invalid Video URL
     if not url.startswith(('https://www.youtube.com/', 'https://youtu.be/')):
         raise ValueError(f"Error: {url} is not a valid YouTube URL.")
-
-    verify_ffmpeg()
 
     setup_directories()
     
@@ -61,10 +66,10 @@ def main(
     else:
         raise Exception("Error: Download failed.")
       
-def verify_ffmpeg():
+def verify_ffmpeg(validate_install):
     ffmpeg_path = shutil.which('ffmpeg')
     if not ffmpeg_path:
-        raise Exception("Error: FFmpeg is not installed.")
+        raise Exception(f"Error: FFmpeg is not installed.\n")
 
     verified = subprocess.run(
             [ffmpeg_path, '-version'],
@@ -74,9 +79,10 @@ def verify_ffmpeg():
         )
     
     if not verified:
-        raise Exception("Error: FFmpeg validation failed.")
+        raise Exception(f"Error: FFmpeg validation failed.\n")
     
-    print("FFmpeg Install Verified.")
+    if validate_install != None:
+        print(f"FFmpeg Install Verified.\n")
 
 if __name__ == "__main__":
     app()
