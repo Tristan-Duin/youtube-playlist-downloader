@@ -28,6 +28,7 @@ def test_main_invalid_url():
 def test_main_successful_download(mock_downloader_class, mock_setup, mock_video_info):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
+    mock_downloader.is_playlist_url.return_value = False
     mock_downloader.get_video_info.return_value = mock_video_info
     mock_downloader.download.return_value = True
     
@@ -36,6 +37,7 @@ def test_main_successful_download(mock_downloader_class, mock_setup, mock_video_
     result = runner.invoke(cli.app, [url])
 
     mock_setup.assert_called_once()
+    mock_downloader.is_playlist_url.assert_called_once_with(url)
     mock_downloader.get_video_info.assert_called_once_with(url)
     mock_downloader.download.assert_called_once_with(url, format='mp4', output_dir=None)
     
@@ -48,6 +50,7 @@ def test_main_successful_download(mock_downloader_class, mock_setup, mock_video_
 def test_main_download_failure(mock_downloader_class, mock_setup):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
+    mock_downloader.is_playlist_url.return_value = False
     mock_downloader.get_video_info.return_value = None
     mock_downloader.download.return_value = False
 
@@ -64,6 +67,7 @@ def test_main_download_failure(mock_downloader_class, mock_setup):
 def test_main_with_audio_only(mock_downloader_class, mock_setup, mock_video_info):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
+    mock_downloader.is_playlist_url.return_value = False
     mock_downloader.get_video_info.return_value = mock_video_info
     mock_downloader.download.return_value = True
     
@@ -81,6 +85,7 @@ def test_main_with_audio_only(mock_downloader_class, mock_setup, mock_video_info
 def test_main_with_output_dir(mock_downloader_class, mock_setup, mock_video_info):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
+    mock_downloader.is_playlist_url.return_value = False
     mock_downloader.get_video_info.return_value = mock_video_info
     mock_downloader.download.return_value = True
     
@@ -99,6 +104,7 @@ def test_main_with_output_dir(mock_downloader_class, mock_setup, mock_video_info
 def test_main_with_both_options(mock_downloader_class, mock_setup, mock_video_info):
     mock_downloader = Mock()
     mock_downloader_class.return_value = mock_downloader
+    mock_downloader.is_playlist_url.return_value = False
     mock_downloader.get_video_info.return_value = mock_video_info
     mock_downloader.download.return_value = True
     
@@ -109,6 +115,37 @@ def test_main_with_both_options(mock_downloader_class, mock_setup, mock_video_in
 
     mock_downloader.download.assert_called_once_with(url, format='mp3', output_dir=output_dir)
     assert result.exit_code == 0
+    assert "Download completed!" in result.stdout
+
+
+@patch('cli.setup_directories')
+@patch('cli.YouTubeDownloader')
+def test_main_with_playlist_url(mock_downloader_class, mock_setup):
+    """Test CLI with playlist URL."""
+    mock_downloader = Mock()
+    mock_downloader_class.return_value = mock_downloader
+    mock_downloader.is_playlist_url.return_value = True
+    mock_playlist_info = {
+        'title': 'Test Playlist',
+        'uploader': 'Test Channel',
+        'video_count': 3
+    }
+    mock_downloader.get_playlist_info.return_value = mock_playlist_info
+    mock_downloader.download.return_value = True
+    
+    url = 'https://www.youtube.com/playlist?list=PL123'
+
+    result = runner.invoke(cli.app, [url])
+
+    mock_setup.assert_called_once()
+    mock_downloader.is_playlist_url.assert_called_once_with(url)
+    mock_downloader.get_playlist_info.assert_called_once_with(url)
+    mock_downloader.download.assert_called_once()
+    
+    assert result.exit_code == 0
+    assert "Starting playlist download..." in result.stdout
+    assert "Playlist: Test Playlist" in result.stdout
+    assert "Videos in playlist: 3" in result.stdout
     assert "Download completed!" in result.stdout
 
 

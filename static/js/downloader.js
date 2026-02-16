@@ -156,7 +156,20 @@ const startPolling = () => {
             const response = await fetch('/status');
             const data = await response.json();
 
-            status.textContent = data.messages.join('\n');
+            let statusText = data.messages.join('\n');
+            
+            // playlist progress information
+            if (data.is_playlist && data.playlist_info) {
+                const progressInfo = `\n\nPlaylist: ${data.playlist_info.title}`;
+                if (data.current_video_index > 0 && data.total_videos > 0) {
+                    const progressBar = `Progress: ${data.current_video_index}/${data.total_videos} videos`;
+                    statusText = progressInfo + '\n' + progressBar + '\n\n' + statusText;
+                } else {
+                    statusText = progressInfo + '\n\n' + statusText;
+                }
+            }
+            
+            status.textContent = statusText;
 
             if (!data.in_progress) {
                 btn.disabled = false;

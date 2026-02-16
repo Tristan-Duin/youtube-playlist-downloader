@@ -31,21 +31,40 @@ def main(
     
     downloader = YouTubeDownloader()
     
-    print(f"Getting video information...")
-    info = downloader.get_video_info(url)
-    
-    if info:
-        print(f"Title: {info['title']}")
-        print(f"Uploader: {info['uploader']}")
-        if info['duration']:
-            minutes = info['duration'] // 60
-            seconds = info['duration'] % 60
-            print(f"Duration: {minutes}m {seconds}s")
-        print()
-    
-    print("Starting download...")
-    format = 'mp3' if audio_only else 'mp4'
-    success = downloader.download(url, format=format, output_dir=output_dir)
+    # Check if this is a playlist
+    if downloader.is_playlist_url(url):
+        print(f"Getting playlist information...")
+        playlist_info = downloader.get_playlist_info(url)
+        
+        if playlist_info:
+            print(f"Playlist: {playlist_info['title']}")
+            print(f"Uploader: {playlist_info['uploader']}")
+            print(f"Videos in playlist: {playlist_info['video_count']}")
+            print()
+        
+        # How we are tracking the status
+        def progress_callback(current: int, total: int, video_title: str) -> None:
+            print(f"[{current}/{total}] {video_title}")
+        
+        print("Starting playlist download...")
+        format = 'mp3' if audio_only else 'mp4'
+        success = downloader.download(url, format=format, output_dir=output_dir, progress_callback=progress_callback)
+    else:
+        print(f"Getting video information...")
+        info = downloader.get_video_info(url)
+        
+        if info:
+            print(f"Title: {info['title']}")
+            print(f"Uploader: {info['uploader']}")
+            if info['duration']:
+                minutes = info['duration'] // 60
+                seconds = info['duration'] % 60
+                print(f"Duration: {minutes}m {seconds}s")
+            print()
+        
+        print("Starting download...")
+        format = 'mp3' if audio_only else 'mp4'
+        success = downloader.download(url, format=format, output_dir=output_dir)
     
     if success:
         print("Download completed!")
