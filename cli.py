@@ -44,7 +44,8 @@ def main(
         print()
     
     print("Starting download...")
-    success = downloader.download_video(url, audio_only, output_dir)
+    format = 'mp3' if audio_only else 'mp4'
+    success = downloader.download(url, format=format, output_dir=output_dir)
     
     if success:
         print("Download completed!")

@@ -56,7 +56,6 @@ def download():
     if not url.startswith(('https://www.youtube.com/', 'https://youtu.be/')):
         return jsonify({'error': 'Please provide a valid YouTube URL'}), 400
 
-    # This release: no playlist download-all support (reject playlist URLs)
     lowered = url.lower()
     if 'list=' in lowered or '/playlist' in lowered:
         return jsonify({'error': 'Playlist downloads are not supported in this release'}), 400
@@ -108,12 +107,12 @@ def download_worker(url: str, selected_format: str, resolution: str, bitrate: st
 
         add_message("Starting download...")
 
-        success = downloader.download_media(
+        success = downloader.download(
             url=url,
-            selected_format=selected_format,
+            format=selected_format,
             resolution=resolution,
             bitrate=bitrate,
-            copyDest=custom_directory
+            output_dir=custom_directory
         )
 
         if success:
