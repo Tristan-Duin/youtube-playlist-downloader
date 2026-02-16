@@ -183,6 +183,7 @@ document.getElementById("history-btn").addEventListener("click", () => {
                                 <th>Title</th>
                                 <th>Format</th>
                                 <th>Size (Megabytes)</th> 
+                                <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
